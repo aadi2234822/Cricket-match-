@@ -7,29 +7,106 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cricket Match Manager - Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#182230}.container{max-width:1250px;margin:auto;padding:18px}header{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}header h1{margin:0 0 5px}header p{margin:0;color:#667085}.card,.auth-card{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 2px 12px #00000012}h2{margin:0 0 16px;font-size:20px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:13px}input,select,textarea{font:inherit;border:1px solid #cfd6df;border-radius:8px;padding:10px;background:#fff}.wide{grid-column:span 2}.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:16px}button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;background:#e9edf2}.primary{background:#1769e0;color:#fff}.danger{background:#d92d20;color:#fff}.toolbar{display:flex;justify-content:space-between;gap:15px;align-items:end;margin-bottom:15px}.toolbar h2{display:inline-block;margin-right:8px}.search{width:320px;display:block}.badge{font-size:12px;background:#e8f0fe;padding:4px 8px;border-radius:20px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1050px}th,td{padding:10px 8px;border-bottom:1px solid #e8ecf0;text-align:left;font-size:13px;vertical-align:top}th{background:#f7f9fb}.small-btn{padding:6px 9px;font-size:12px}.edit{background:#fff4cc}.delete{background:#ffe3e1}.empty{text-align:center;color:#7a8491;padding:25px}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card{width:min(420px,100%)}.auth-card h1{margin-top:0}.auth-card form{display:grid;gap:12px}.link-btn{margin-top:12px;background:none;color:#1769e0}.userbar{display:flex;align-items:center;gap:10px}.hidden{display:none!important}#authMsg{color:#c62828;min-height:18px}@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.wide{grid-column:span 2}.toolbar{flex-direction:column;align-items:stretch}.search{width:100%}}@media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:span 1}header{align-items:flex-start;flex-direction:column}.container{padding:10px}}
-.remarks-input{border:2px solid #FFD600!important;border-radius:8px}
-td.remarks-cell{border:2px solid #FFD600!important;background:#fffde7}
-.timebox{display:flex;gap:4px}.timebox select{padding:9px 6px;min-width:0;flex:1}
+:root{--ink:#16231b;--muted:#5d6b62;--turf:#1d5a38;--turf-dark:#123d26;--chalk:#f4f6f0;--paper:#fff;--line:#dce2d6;--field:#c6cfc2;--leather:#b3382a;--amber:#a86a00;--mint:#e6f0e8;--yellow:#FFD600}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Barlow',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;font-size:16px;line-height:1.45;background:var(--chalk);color:var(--ink)}
+.container{max-width:1200px;margin:auto;padding:14px}
+h1,h2{font-family:'Barlow Condensed','Barlow',Arial,sans-serif;font-weight:700;letter-spacing:.2px}
+header{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:16px;padding:20px 22px;border-radius:12px;color:#fff;background:repeating-linear-gradient(90deg,#174a2f 0 56px,#1b5638 56px 112px)}
+header h1{margin:0;font-size:34px;line-height:1.05}
+header p{margin:4px 0 0;color:#cfe3d4;font-size:15px}
+.userbar{display:flex;align-items:center;gap:10px;font-size:14px;flex-wrap:wrap}
+.userbar button{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.4)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
+.card>h2,.toolbar h2{margin:0 0 16px;font-size:24px;color:var(--turf-dark)}
+.card>h2{padding-bottom:10px;border-bottom:2px solid var(--turf)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.wide{grid-column:span 2}
+label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px;color:var(--ink)}
+input,select,textarea{font:inherit;font-weight:400;border:1px solid var(--field);border-radius:8px;padding:10px 11px;background:#fff;color:var(--ink);min-height:44px;width:100%}
+input[readonly]{background:#f0f3ed;color:var(--muted)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid #9cc9ac;outline-offset:1px;border-color:var(--turf)}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+button{font:inherit;font-weight:600;border:1px solid var(--field);border-radius:8px;padding:10px 16px;min-height:44px;cursor:pointer;background:#fff;color:var(--ink);transition:background .15s,border-color .15s}
+button:hover{background:var(--mint);border-color:var(--turf)}
+button:disabled{opacity:.55;cursor:wait}
+.primary{background:var(--turf);border-color:var(--turf);color:#fff}
+.primary:hover{background:var(--turf-dark);border-color:var(--turf-dark)}
+.danger{background:#fff;border-color:var(--leather);color:var(--leather)}
+.danger:hover{background:var(--leather);border-color:var(--leather);color:#fff}
+.toolbar{display:flex;justify-content:space-between;gap:15px;align-items:end;margin-bottom:14px}
+.toolbar h2{display:inline-block;margin:0 8px 10px 0}
+.toolbar .actions{margin:0}
+.month-downloads{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
+.month-downloads:empty{display:none}
+.month-download-btn{background:var(--turf);border-color:var(--turf);color:#fff}
+.month-download-btn:hover{background:var(--turf-dark);border-color:var(--turf-dark)}
+.search{width:320px;display:block}
+.badge{font-family:'Barlow',Arial,sans-serif;font-size:14px;font-weight:700;background:var(--turf);color:#fff;padding:2px 10px;border-radius:20px;vertical-align:middle}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;min-width:1050px;background:#fff}
+th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
+th{background:#eaf0e6;color:var(--turf-dark);font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even){background:#fafbf8}
+tbody tr:last-child td{border-bottom:0}
+.small-btn{padding:6px 12px;font-size:13px;min-height:36px}
+.edit{background:#fff;border-color:var(--turf);color:var(--turf)}
+.delete{background:#fff;border-color:var(--leather);color:var(--leather)}
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:600;border:1px solid}
+.pill.done{background:var(--mint);color:var(--turf-dark);border-color:#9cc9ac}
+.pill.pending{background:#fff4dc;color:var(--amber);border-color:#e9c77d}
+.empty{text-align:center;color:var(--muted);padding:26px}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;padding:0 24px 24px}
+.auth-card::before{content:"";display:block;height:14px;margin:0 -24px 22px;background:repeating-linear-gradient(90deg,#174a2f 0 28px,#1b5638 28px 56px)}
+.auth-card h1{margin:0 0 4px;font-size:32px;color:var(--turf-dark)}
+.auth-card p{margin:0 0 14px;color:var(--muted)}
+.auth-card form{display:grid;gap:12px}
+.link-btn{margin-top:12px;background:none;border:0;color:var(--turf);text-decoration:underline;padding:8px 0}
+.link-btn:hover{background:none}
+.hidden{display:none!important}
+#authMsg{color:var(--leather);min-height:20px;margin:8px 0 0}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 0 24px}
+.remarks-input{border:1px solid var(--field);border-radius:8px}
+td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
+.timebox{display:flex;gap:4px}
+.timebox select{padding:9px 6px;min-width:0;flex:1}
 #timeBox{display:block}
-.dgroup{border:1px solid #cfd6df;border-radius:12px;padding:12px;margin-top:14px;background:#fafbfc}
+.dgroup{border:1px solid var(--line);border-left:4px solid var(--turf);border-radius:10px;padding:14px;margin-top:14px;background:#fafbf8}
 .dgroup-head{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
 .dgroup-head label{max-width:170px}
 .mline{display:grid;grid-template-columns:200px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
 .mline .timebox{width:200px}
-.mline input{width:100%}
-.small-btn.rm{background:#ffe3e1}
-.month-btns{display:inline-flex;gap:9px;flex-wrap:wrap}
+.small-btn.rm{background:#fff;border-color:var(--leather);color:var(--leather)}
+#afMsg{color:var(--muted);white-space:pre-line;margin:12px 0 0}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.toolbar{flex-direction:column;align-items:stretch}.search{width:100%}}
+@media(max-width:700px){
+ .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px}
+ table{min-width:1050px;width:1050px;border-collapse:collapse}
+ thead{display:table-header-group}
+ tbody{display:table-row-group}
+ tbody tr{display:table-row;border:0;border-radius:0;margin:0;padding:0;background:#fff!important}
+ tbody td{display:table-cell;justify-content:initial;gap:initial;border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;white-space:normal}
+ tbody td::before{content:none}
+ td.remarks-cell{margin:0;border-bottom:1px solid var(--line);border-radius:0;width:auto;background:transparent}
+ tbody td:last-child{border-bottom:1px solid var(--line);justify-content:initial;gap:initial}
+ tbody td:last-child::before{display:none}
+ th,td{font-size:13px}
+}
 @media(max-width:620px){.mline{grid-template-columns:1fr auto}.mline .timebox{grid-column:1/3;width:100%}}
-
+@media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:span 1}header{flex-direction:column;align-items:flex-start}header h1{font-size:30px}.container{padding:10px}.card{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div id="loginScreen" class="auth">
   <div class="auth-card">
     <h1>🏏 Cricket Match Manager</h1>
-    <p>Online Database Login</p>
+    <p>Sign in to your match database</p>
     <form id="loginForm">
       <input id="email" type="email" placeholder="Email" required>
       <input id="password" type="password" placeholder="Password" required>
@@ -50,7 +127,24 @@ td.remarks-cell{border:2px solid #FFD600!important;background:#fffde7}
 </header>
 
 <section class="card">
-<h2>Bulk Add - ek series ke saare matches ek saath</h2>
+<h2>Auto fetch: enter a series name to load all its matches</h2>
+<div class="grid">
+<label class="wide">Series name<input id="afSeries" placeholder="e.g. Nepal Premier League 2026"></label>
+<label>Time Zone<select id="afTZ"><option value="local">This device's local time</option><option value="utc">GMT / UTC</option><option value="ist">India (IST)</option></select></label>
+<label class="wide">CricAPI key (saved on this device)<input id="afKey" type="password" placeholder="Free key from cricketdata.org"></label>
+</div>
+<div id="afPick" class="hidden" style="margin-top:12px"><label>Select the series<select id="afSelect"></select></label></div>
+<div class="actions">
+<button type="button" id="afSearchBtn" class="primary">Search series</button>
+<button type="button" id="afGetBtn" class="hidden">Fetch matches</button>
+<button type="button" id="afSaveBtn" class="primary hidden">Save all to app</button>
+</div>
+<p id="afMsg" style="color:#667085;white-space:pre-line"></p>
+<div class="table-wrap hidden" id="afPrevWrap"><table style="min-width:600px"><thead><tr><th>Date</th><th>Time</th><th>Match</th><th>Type</th></tr></thead><tbody id="afPrev"></tbody></table></div>
+</section>
+
+<section class="card">
+<h2>Bulk add: many matches in one series</h2>
 <div class="grid">
 <label>Format<input id="bFormat" value="Cricket"></label>
 <label class="wide">Series<input id="bSeries" placeholder="Series name"></label>
@@ -58,12 +152,12 @@ td.remarks-cell{border:2px solid #FFD600!important;background:#fffde7}
 <label>Expected Overs<input id="bExpected" readonly></label>
 <label>Recorded<select id="bRecorded"><option>Pending</option><option>Done</option></select></label>
 <label>Uploaded<select id="bUploaded"><option>Pending</option><option>Done</option></select></label>
-<label class="wide">Recording Remarks (sab matches ke liye, optional)<textarea id="bRemarks" class="remarks-input" rows="2"></textarea></label>
+<label class="wide">Recording Remarks (applies to every match, optional)<textarea id="bRemarks" class="remarks-input" rows="2"></textarea></label>
 </div>
 <div id="dateGroups"></div>
 <div class="actions">
 <button type="button" id="addDateBtn">+ Add Date</button>
-<button type="button" id="bulkSaveBtn" class="primary">Save All Matches</button>
+<button type="button" id="bulkSaveBtn" class="primary">Save all matches</button>
 </div>
 </section>
 
@@ -92,15 +186,16 @@ td.remarks-cell{border:2px solid #FFD600!important;background:#fffde7}
 <section class="card">
 <div class="toolbar">
 <div><h2>All Matches <span id="count" class="badge">0</span></h2><input id="search" class="search" placeholder="Search..."></div>
-<div class="actions"><button id="importBtn">Import Excel</button><span id="monthBtns" class="month-btns"></span><button id="clearAllBtn" class="danger">Delete All</button><input id="fileInput" type="file" accept=".xlsx,.xls" hidden></div>
+<div class="actions"><button id="importBtn">Import Excel</button><button id="clearAllBtn" class="danger">Delete All</button><input id="fileInput" type="file" accept=".xlsx,.xls" hidden></div>
 </div>
+<div id="monthDownloadButtons" class="month-downloads"></div>
 <div class="table-wrap">
 <table><thead><tr><th>Date</th><th>Time</th><th>Series</th><th>Match</th><th>ODI/T20</th><th>Expected</th><th>Recorded</th><th>Uploaded</th><th>Remarks</th><th>Action</th></tr></thead>
 <tbody id="matchTable"></tbody></table>
 </div>
 <p id="empty" class="empty">No matches found.</p>
 </section>
-<footer>Online data is stored in Supabase. | Version 11</footer>
+<footer>Online data is stored in Supabase. | Version 17</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -184,7 +279,7 @@ $("odiT20").addEventListener("change",()=>{ $("expected").value=overs($("odiT20"
 $("matchForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const d=parseDMY($("date").value);
- if(!d){alert("Date dd-mm-yyyy format me daalo (jaise 15-09-2026).");return;}
+ if(!d){alert("Enter the date as dd-mm-yyyy (for example 15-09-2026).");return;}
  const row={format:$("format").value.trim(),match_date:d,match_time:getTP(timePicker),series:$("series").value.trim(),match:$("match").value.trim(),odi_t20:$("odiT20").value,expected_overs:Number($("expected").value)||null,recorded:$("recorded").value,uploaded:$("uploaded").value,recording_remarks:$("remarks").value.trim()};
  let result;
  if(editingId) result=await client.from("matches").update(row).eq("id",editingId);
@@ -226,25 +321,25 @@ function resetBulk(){ $("bExpected").value=overs($("bOdiT20").value)??""; if(!do
 $("addDateBtn").addEventListener("click",()=>{ const g=addDateGroup(""); g.querySelector(".g-date").focus(); });
 $("bulkSaveBtn").addEventListener("click",async()=>{
   const series=$("bSeries").value.trim(), type=$("bOdiT20").value;
-  if(!series){alert("Series name daalo.");return;}
-  if(!type){alert("ODI ya T20 select karo.");return;}
+  if(!series){alert("Enter a series name.");return;}
+  if(!type){alert("Select ODI or T20.");return;}
   const rows=[];
   for(const g of document.querySelectorAll(".dgroup")){
     const raw=g.querySelector(".g-date").value.trim();
     const lines=[...g.querySelectorAll(".mline")].filter(l=>l.querySelector(".m-text").value.trim());
     if(!raw && !lines.length) continue;
     const d=parseDMY(raw);
-    if(!d){alert("Date galat hai: '"+raw+"'. dd-mm-yyyy me daalo.");return;}
+    if(!d){alert("Invalid date: '"+raw+"'. Use dd-mm-yyyy.");return;}
     for(const l of lines){
       rows.push({format:$("bFormat").value.trim()||"Cricket",match_date:d,match_time:getTP(l.querySelector(".timebox")),series,match:l.querySelector(".m-text").value.trim(),odi_t20:type,expected_overs:overs(type),recorded:$("bRecorded").value,uploaded:$("bUploaded").value,recording_remarks:$("bRemarks").value.trim()});
     }
   }
-  if(!rows.length){alert("Kam se kam ek match line bharo.");return;}
+  if(!rows.length){alert("Add at least one match.");return;}
   $("bulkSaveBtn").disabled=true;
   const {error}=await client.from("matches").insert(rows);
   $("bulkSaveBtn").disabled=false;
   if(error){alert(error.message);return;}
-  alert(rows.length+" match(es) add ho gaye.");
+  alert(rows.length+" match(es) added.");
   resetBulkGroups(); $("bRemarks").value=""; await render();
 });
 
@@ -259,11 +354,13 @@ async function fetchOrdered(){
 async function render(){
  const {data,error}=await fetchOrdered();
  if(error){alert(error.message);return}
- allMatches=data||[]; renderMonthButtons();
+ allMatches=data||[];
  const q=$("search").value.toLowerCase().trim();
  const rows=allMatches.filter(r=>!q||[...Object.values(r),fmtDate(r.match_date),fmtTime(r.match_time)].some(v=>String(v??"").toLowerCase().includes(q)));
  $("count").textContent=allMatches.length;$("empty").style.display=rows.length?"none":"block";
- $("matchTable").innerHTML=rows.map(r=>`<tr><td>${esc(fmtDate(r.match_date))}</td><td>${esc(fmtTime(r.match_time))}</td><td>${esc(r.series)}</td><td>${esc(r.match)}</td><td>${esc(r.odi_t20)}</td><td>${esc(r.expected_overs)}</td><td>${esc(r.recorded)}</td><td>${esc(r.uploaded)}</td><td class="remarks-cell">${esc(r.recording_remarks)}</td><td><button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button></td></tr>`).join("");
+ renderMonthDownloadButtons(allMatches);
+ const pill=v=>`<span class="pill ${v==="Done"?"done":"pending"}">${esc(v)}</span>`;
+ $("matchTable").innerHTML=rows.map(r=>`<tr><td data-label="Date">${esc(fmtDate(r.match_date))}</td><td data-label="Time">${esc(fmtTime(r.match_time))}</td><td data-label="Series">${esc(r.series)}</td><td data-label="Match">${esc(r.match)}</td><td data-label="ODI/T20">${esc(r.odi_t20)}</td><td data-label="Expected">${esc(r.expected_overs)}</td><td data-label="Recorded">${pill(r.recorded)}</td><td data-label="Uploaded">${pill(r.uploaded)}</td><td class="remarks-cell" data-label="Remarks">${esc(r.recording_remarks)}</td><td><button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button></td></tr>`).join("");
 }
 window.editMatch=async id=>{
  const r=allMatches.find(x=>x.id===id);if(!r)return;editingId=id;
@@ -274,55 +371,68 @@ window.deleteMatch=async id=>{if(confirm("Delete this match?")){const {error}=aw
 $("clearBtn").addEventListener("click",resetForm);$("search").addEventListener("input",render);
 $("clearAllBtn").addEventListener("click",async()=>{if(!confirm("Delete ALL your matches?"))return;const {error}=await client.from("matches").delete().not("id","is",null);if(error)alert(error.message);else render();});
 
-/* ---------- Excel export (same column layout as your Sep2026 sheet) ---------- */
-async function exportMonth(ym){
- if(typeof XLSX==="undefined"){alert("Excel library load nahi hui. Internet check karo aur page refresh karo.");return;}
- const res=await fetchOrdered();
- if(res.error){alert(res.error.message);return;}
- const data=(res.data||[]).filter(r=>String(r.match_date).startsWith(ym));
- if(!data.length){alert("Is month me koi match nahi hai.");return;}
- const [yy,mo]=ym.split("-"); const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
- const monthName=MN[+mo-1], sheetName=monthName.slice(0,3)+yy;
- data.sort((a,b)=>String(a.match_date).localeCompare(String(b.match_date))||String(a.match_time||"99").localeCompare(String(b.match_time||"99")));
- const blk={style:"thin",color:{rgb:"000000"}}, yel={style:"medium",color:{rgb:"FFD600"}};
- const border={top:blk,bottom:blk,left:blk,right:blk};
- const hdrStyle={font:{name:"Arial",sz:13,bold:true},fill:{patternType:"solid",fgColor:{rgb:"FFC000"}},border,alignment:{horizontal:"center",vertical:"center"}};
- const base={font:{name:"Arial",sz:12},alignment:{horizontal:"center",vertical:"center"}};
- const left={...base,alignment:{horizontal:"left",vertical:"center"}};
- const remStyle={font:{name:"Arial",sz:12},border:{top:yel,bottom:yel,left:yel,right:yel},alignment:{horizontal:"left",vertical:"center",wrapText:true}};
- const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks"];
- const aoa=[heads.map(h=>({v:h,t:"s",s:hdrStyle}))];
- for(const r of (data||[])){
-   const serial=r.match_date?Math.round((Date.UTC(...r.match_date.split("-").map((x,i)=>i==1?+x-1:+x))-Date.UTC(1899,11,30))/86400000):"";
-   aoa.push([
-     serial===""?{v:"",t:"s",s:base}:{v:serial,t:"n",z:"dd-mm-yyyy",s:base},
-     (r.match_time?{v:(()=>{const [hh,mm,ss]=String(r.match_time).split(":").map(Number);return ((hh*3600)+(mm*60)+(ss||0))/86400;})(),t:"n",z:"h:mm AM/PM",s:base}:{v:"",t:"s",s:base}),
-     {v:r.series||"",t:"s",s:left},{v:r.match||"",t:"s",s:left},
-     {v:r.odi_t20||"",t:"s",s:left},
-     r.expected_overs?{v:r.expected_overs,t:"n",s:left}:{v:"",t:"s",s:left},
-     {v:r.recorded||"",t:"s",s:base},{v:r.uploaded||"",t:"s",s:base},
-     {v:r.recording_remarks||"",t:"s",s:remStyle}
-   ]);
- }
- const ws=XLSX.utils.aoa_to_sheet(aoa);
- ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14].map(w=>({wch:w}));
- ws["!rows"]=[{hpt:24}];
- const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,sheetName);
- const fname=`${monthName.toUpperCase()}${yy}_Cricket_${pad(new Date().getHours())}${pad(new Date().getMinutes())}${pad(new Date().getSeconds())}.xlsx`;
- const arr=XLSX.write(wb,{bookType:"xlsx",type:"array"});
- const blob=new Blob([arr],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
- const url=URL.createObjectURL(blob), link=document.createElement("a");
- link.href=url; link.download=fname; document.body.appendChild(link); link.click();
- setTimeout(()=>{link.remove();URL.revokeObjectURL(url);},3000);
- alert("Excel ban gayi: "+fname+"\nRows: "+data.length);
+/* ---------- Month-wise Excel download buttons ---------- */
+const MONTH_NAMES=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function monthKey(dateStr){
+  const m=String(dateStr||"").match(/^(\d{4})-(\d{2})-/);
+  return m?`${m[1]}-${m[2]}`:"";
+}
+function monthLabel(key){
+  const [y,m]=key.split("-").map(Number);
+  return `${MONTH_NAMES[m-1]} ${y}`;
+}
+function renderMonthDownloadButtons(rows){
+  const keys=[...new Set((rows||[]).map(r=>monthKey(r.match_date)).filter(Boolean))].sort();
+  const box=$("monthDownloadButtons");
+  box.innerHTML=keys.map(k=>`<button type="button" class="month-download-btn" data-month="${k}">⬇ ${esc(monthLabel(k))} Excel</button>`).join("");
+  box.querySelectorAll("[data-month]").forEach(btn=>btn.addEventListener("click",()=>downloadMonthExcel(btn.dataset.month)));
 }
 
-/* ---------- Month-wise download buttons ---------- */
-function renderMonthButtons(){
-  const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
-  const months=[...new Set(allMatches.map(r=>String(r.match_date).slice(0,7)))].filter(Boolean).sort();
-  $("monthBtns").innerHTML=months.map(ym=>{const [y,m]=ym.split("-");return `<button class="primary" data-ym="${ym}">⬇ ${MN[+m-1]} ${y} Excel</button>`;}).join(" ");
-  $("monthBtns").querySelectorAll("button").forEach(b=>b.onclick=()=>exportMonth(b.dataset.ym));
+function makeExcelWorkbook(rows,key){
+  const blk={style:"thin",color:{rgb:"000000"}}, yel={style:"medium",color:{rgb:"FFD600"}};
+  const border={top:blk,bottom:blk,left:blk,right:blk};
+  const hdrStyle={font:{name:"Arial",sz:13,bold:true},fill:{patternType:"solid",fgColor:{rgb:"FFC000"}},border,alignment:{horizontal:"center",vertical:"center"}};
+  const base={font:{name:"Arial",sz:12},alignment:{horizontal:"center",vertical:"center"}};
+  const left={...base,alignment:{horizontal:"left",vertical:"center"}};
+  const remStyle={...left};
+  const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks"];
+  const aoa=[heads.map(h=>({v:h,t:"s",s:hdrStyle}))];
+  for(const r of rows){
+    const serial=r.match_date?Math.round((Date.UTC(...r.match_date.split("-").map((x,i)=>i===1?+x-1:+x))-Date.UTC(1899,11,30))/86400000):"";
+    aoa.push([
+      serial===""?{v:"",t:"s",s:base}:{v:serial,t:"n",z:"dd-mm-yyyy",s:base},
+      r.match_time?{v:(()=>{const [hh,mm,ss]=String(r.match_time).split(":").map(Number);return ((hh*3600)+(mm*60)+(ss||0))/86400;})(),t:"n",z:"h:mm AM/PM",s:base}:{v:"",t:"s",s:base},
+      {v:r.series||"",t:"s",s:left},{v:r.match||"",t:"s",s:left},
+      {v:r.odi_t20||"",t:"s",s:left},
+      r.expected_overs?{v:r.expected_overs,t:"n",s:left}:{v:"",t:"s",s:left},
+      {v:r.recorded||"",t:"s",s:base},{v:r.uploaded||"",t:"s",s:base},
+      {v:r.recording_remarks||"",t:"s",s:remStyle}
+    ]);
+  }
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14].map(w=>({wch:w}));
+  ws["!rows"]=[{hpt:24}];
+  const [year,month]=key.split("-").map(Number);
+  const sheetName=`${MONTH_NAMES[month-1].slice(0,3)}${year}`;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  return wb;
+}
+
+async function downloadMonthExcel(key){
+  if(typeof XLSX==="undefined"){alert("Excel library failed to load. Check your internet connection and refresh the page.");return;}
+  const rows=(allMatches||[]).filter(r=>monthKey(r.match_date)===key)
+    .sort((a,b)=>String(a.match_date).localeCompare(String(b.match_date))||String(a.match_time||"99").localeCompare(String(b.match_time||"99"))||Number(a.seq||0)-Number(b.seq||0));
+  if(!rows.length){alert("No matches found for "+monthLabel(key)+".");return;}
+  const wb=makeExcelWorkbook(rows,key);
+  const [year,month]=key.split("-").map(Number);
+  const fname=`Cricket_Matches_${MONTH_NAMES[month-1]}_${year}.xlsx`;
+  const arr=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+  const blob=new Blob([arr],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  const url=URL.createObjectURL(blob), link=document.createElement("a");
+  link.href=url; link.download=fname; document.body.appendChild(link); link.click();
+  setTimeout(()=>{link.remove();URL.revokeObjectURL(url);},5000);
 }
 
 /* ---------- Excel import ---------- */
@@ -343,7 +453,7 @@ function typeOf(v){
 $("fileInput").addEventListener("change",async e=>{
  const file=e.target.files[0];if(!file)return;
  try{
-  if(typeof XLSX==="undefined"){alert("Excel library load nahi hui. Internet check karo aur page refresh karo.");return;}
+  if(typeof XLSX==="undefined"){alert("Excel library failed to load. Check your internet connection and refresh the page.");return;}
   const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});
   const ws=wb.Sheets[wb.SheetNames[0]];
   const rows=XLSX.utils.sheet_to_json(ws,{defval:"",raw:true});
@@ -353,14 +463,16 @@ $("fileInput").addEventListener("change",async e=>{
   const kf=(d,t,s,m)=>[d,String(t||"").slice(0,5),String(s).trim().toLowerCase(),String(m).trim().toLowerCase()].join("|");
   const seen=new Set((existing||[]).map(r=>kf(r.match_date,r.match_time,r.series,r.match)));
   const out=[],bad=[];let skipped=0;
+  const serType={};
+  rows.forEach(raw=>{const x=norm(raw);const t=typeOf(x["odi/t20"]||x["odi / t20"]||x["odi t20"])||typeOf(x["match"]);const sr=String(x["series"]||"").trim().toLowerCase();if(t&&sr&&!serType[sr])serType[sr]=t;});
   rows.forEach((raw,i)=>{
     const x=norm(raw);
     const series=String(x["series"]||"").trim(), match=String(x["match"]||"").trim();
     if(!series&&!match) return;
     const d=excelDate(x["date"]);
-    if(!d){bad.push("Row "+(i+2)+": date samajh nahi aayi");return;}
-    const type=typeOf(x["odi/t20"]||x["odi / t20"]||x["odi t20"]);
-    if(!type){bad.push("Row "+(i+2)+": ODI/T20 samajh nahi aaya");return;}
+    if(!d){bad.push("Row "+(i+2)+": could not read the date");return;}
+    const type=typeOf(x["odi/t20"]||x["odi / t20"]||x["odi t20"])||typeOf(match)||serType[series.toLowerCase()]||"";
+    if(!type){bad.push("Row "+(i+2)+": could not determine ODI/T20");return;}
     const t=excelTime(x["time"]);
     const rec=statusOf(x["recorded"]||x["record"]), upl=statusOf(x["uploaded"]||x["upload"]);
     const remarks=[String(x["recording remarks"]||"").trim(),rec.note,upl.note].filter(Boolean).join(" | ");
@@ -377,7 +489,7 @@ $("fileInput").addEventListener("change",async e=>{
     if(!error){n+=chunk.length;continue;}
     for(const r of chunk){const {error:e2}=await client.from("matches").insert(r); if(e2) bad.push(r.series+" | "+r.match+": "+e2.message); else n++;}
   }
-  alert(n+" match(es) import hue.\n"+skipped+" pehle se the (skip).\n"+bad.length+" row(s) me problem."+(bad.length?"\n\n"+bad.slice(0,5).join("\n"):""));
+  alert(n+" match(es) imported.\n"+skipped+" already existed (skipped).\n"+bad.length+" row(s) with problems."+(bad.length?"\n\n"+bad.slice(0,5).join("\n"):""));
   render();
  }catch(err){alert("Import failed: "+err.message)} e.target.value="";
 });
@@ -393,6 +505,92 @@ function excelTime(v){
   if(ap==="PM"&&h<12)h+=12; if(ap==="AM"&&h===12)h=0;
   return `${pad(h)}:${m[2]}:00`;
 }
+/* ---------- Auto Fetch from CricAPI (series name -> all matches) ---------- */
+let afRows=[];
+const AF="https://api.cricapi.com/v1/";
+$("afKey").value=localStorage.getItem("cricapi_key")||"";
+function afMsg(t){$("afMsg").textContent=t||"";}
+async function afCall(path,params){
+  const key=$("afKey").value.trim(); if(!key) throw new Error("Enter your CricAPI key.");
+  localStorage.setItem("cricapi_key",key);
+  const u=AF+path+"?"+new URLSearchParams({apikey:key,...params});
+  const r=await fetch(u); const j=await r.json();
+  if(j.status&&j.status!=="success") throw new Error(j.reason||"API error");
+  return j;
+}
+function afIST(gmt){ // GMT string -> date/time in chosen time zone
+  if(!gmt) return null;
+  const d=new Date(String(gmt).replace(" ","T").replace(/Z?$/,"Z")); if(isNaN(d)) return null;
+  const tz=$("afTZ").value;
+  if(tz==="local") return {date:`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,time:`${pad(d.getHours())}:${pad(d.getMinutes())}:00`};
+  const t=tz==="ist"?new Date(d.getTime()+330*60000):d;
+  return {date:`${t.getUTCFullYear()}-${pad(t.getUTCMonth()+1)}-${pad(t.getUTCDate())}`,time:`${pad(t.getUTCHours())}:${pad(t.getUTCMinutes())}:00`};
+}
+function afType(m){
+  const mt=String(m.matchType||"").toUpperCase();
+  if(mt.includes("ODI")) return "ODI"; if(mt.includes("T20")) return "T20";
+  return typeOf(m.name);
+}
+$("afSearchBtn").addEventListener("click",async()=>{
+  const q=$("afSeries").value.trim(); if(!q){alert("Enter a series name.");return;}
+  afMsg("Searching..."); $("afSaveBtn").classList.add("hidden"); $("afPrevWrap").classList.add("hidden");
+  try{
+    const j=await afCall("series",{offset:0,search:q});
+    const list=j.data||[];
+    if(!list.length){afMsg("No series found with that name. Try a shorter name.");$("afPick").classList.add("hidden");$("afGetBtn").classList.add("hidden");return;}
+    $("afSelect").innerHTML=list.map(x=>`<option value="${esc(x.id)}">${esc(x.name)} (${esc(x.startDate||"")} - ${esc(x.endDate||"")})</option>`).join("");
+    $("afPick").classList.remove("hidden"); $("afGetBtn").classList.remove("hidden");
+    afMsg(list.length+" series found. Select the right one, then tap Fetch matches.");
+  }catch(e){afMsg("Error: "+e.message);}
+});
+$("afGetBtn").addEventListener("click",async()=>{
+  const id=$("afSelect").value; if(!id) return;
+  const sname=$("afSelect").selectedOptions[0].textContent.replace(/\s*\([^()]*\)\s*$/,"").trim();
+  afMsg("Loading matches..."); 
+  try{
+    const j=await afCall("series_info",{id});
+    let ml=(j.data&&j.data.matchList)||j.matchList||[];
+    if(!ml.length){ // fallback: search the matches list by series_id
+      let off=0,total=1e9,pages=0;
+      while(off<total&&pages<20){
+        afMsg("Series info was empty. Searching the matches list... (page "+(pages+1)+")");
+        const jm=await afCall("matches",{offset:off});
+        const arr=jm.data||[]; total=(jm.info&&jm.info.totalRows)||0;
+        ml=ml.concat(arr.filter(x=>x.series_id===id));
+        if(!arr.length) break; off+=arr.length; pages++;
+      }
+    }
+    afRows=[]; let skipped=0, tmp=[];
+    for(const m of ml){ const dt=afIST(m.dateTimeGMT||m.date); if(!dt||!m.name){skipped++;continue;} tmp.push({m,dt,type:afType(m)}); }
+    const known=tmp.map(x=>x.type).filter(Boolean);
+    const guess=known.length?(known.filter(t=>t==="ODI").length>known.length/2?"ODI":"T20"):"";
+    for(const x of tmp){
+      const type=x.type||guess; if(!type){skipped++;continue;}
+      afRows.push({format:"Cricket",match_date:x.dt.date,match_time:x.dt.time,series:sname,match:String(x.m.name).trim(),odi_t20:type,expected_overs:overs(type),recorded:"Pending",uploaded:"Pending",recording_remarks:""});
+    }
+    afRows.sort((a,b)=>(a.match_date+a.match_time).localeCompare(b.match_date+b.match_time));
+    $("afPrev").innerHTML=afRows.map(r=>`<tr><td>${fmtDate(r.match_date)}</td><td>${fmtTime(r.match_time)}</td><td>${esc(r.match)}</td><td>${r.odi_t20}</td></tr>`).join("");
+    $("afPrevWrap").classList.toggle("hidden",!afRows.length);
+    $("afSaveBtn").classList.toggle("hidden",!afRows.length);
+    afMsg(afRows.length+" matches found"+(skipped?" ("+skipped+" skipped: no date or format)":"")+". Times use the time zone selected above. Review, then tap Save all to app.");
+  }catch(e){afMsg("Error: "+e.message);}
+});
+$("afSaveBtn").addEventListener("click",async()=>{
+  if(!afRows.length) return;
+  $("afSaveBtn").disabled=true;
+  const {data:ex,error:ee}=await client.from("matches").select("match_date,match_time,series,match");
+  if(ee){alert(ee.message);$("afSaveBtn").disabled=false;return;}
+  const kf=r=>[r.match_date,String(r.match_time||"").slice(0,5),String(r.series).trim().toLowerCase(),String(r.match).trim().toLowerCase()].join("|");
+  const seen=new Set((ex||[]).map(kf));
+  const out=afRows.filter(r=>!seen.has(kf(r)));
+  let n=0,err="";
+  for(let k=0;k<out.length;k+=100){const {error}=await client.from("matches").insert(out.slice(k,k+100)); if(error){err=error.message;break;} n+=Math.min(100,out.length-k);}
+  $("afSaveBtn").disabled=false;
+  alert(n+" match(es) added.\n"+(afRows.length-out.length)+" already existed (skipped)."+(err?"\nError: "+err:""));
+  if(!err){afRows=[];$("afPrevWrap").classList.add("hidden");$("afSaveBtn").classList.add("hidden");afMsg("");}
+  render();
+});
+
 init();
 
 </script>

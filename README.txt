@@ -27,3 +27,19 @@ NEW FEATURES:
 - Date hamesha dd-mm-yyyy, Time hamesha AM/PM me dikhta hai (app aur Excel dono me).
 - Recording Remarks ka border yellow hai (form, table aur Excel).
 - Excel export ab xlsx-js-style use karta hai taaki colors/borders sahi save hon.
+
+
+VERSION 15 (new look, all text in English) - AUTO FETCH:
+- Upar "Auto Fetch" box me series ka naam daalo -> Search Series -> Fetch Matches -> Save All to App.
+- CricAPI (cricketdata.org) ki free API key ek baar daalni hai (browser me save rehti hai).
+- Time zone box me chuno: Phone ka local time (default), GMT/UTC ya India (IST).
+- Import me ODI/T20 khali ho (Final/Semi Final) to khud pata laga leta hai.
+
+
+VERSION 16 - MONTH-WISE EXCEL DOWNLOAD:
+- All database matches remain visible together in the All Matches table.
+- Excel download buttons are created automatically only for months that have match data.
+- Example: if data exists in September 2026 and October 2026, buttons for September 2026 Excel and October 2026 Excel appear.
+- Each button downloads only that month's matches.
+- No database schema change is required.
+- Note: Acode Preview on some Android versions cannot download blob: URLs. If Acode crashes while downloading, open the page in Chrome/another browser for the Excel download.
