@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cricket Match Manager - Online</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#182230}.container{max-width:1250px;margin:auto;padding:18px}header{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}header h1{margin:0 0 5px}header p{margin:0;color:#667085}.card,.auth-card{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 2px 12px #00000012}h2{margin:0 0 16px;font-size:20px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:13px}input,select,textarea{font:inherit;border:1px solid #cfd6df;border-radius:8px;padding:10px;background:#fff}.wide{grid-column:span 2}.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:16px}button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;background:#e9edf2}.primary{background:#1769e0;color:#fff}.danger{background:#d92d20;color:#fff}.toolbar{display:flex;justify-content:space-between;gap:15px;align-items:end;margin-bottom:15px}.toolbar h2{display:inline-block;margin-right:8px}.search{width:320px;display:block}.badge{font-size:12px;background:#e8f0fe;padding:4px 8px;border-radius:20px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1050px}th,td{padding:10px 8px;border-bottom:1px solid #e8ecf0;text-align:left;font-size:13px;vertical-align:top}th{background:#f7f9fb}.small-btn{padding:6px 9px;font-size:12px}.edit{background:#fff4cc}.delete{background:#ffe3e1}.empty{text-align:center;color:#7a8491;padding:25px}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card{width:min(420px,100%)}.auth-card h1{margin-top:0}.auth-card form{display:grid;gap:12px}.link-btn{margin-top:12px;background:none;color:#1769e0}.userbar{display:flex;align-items:center;gap:10px}.hidden{display:none!important}#authMsg{color:#c62828;min-height:18px}@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.wide{grid-column:span 2}.toolbar{flex-direction:column;align-items:stretch}.search{width:100%}}@media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:span 1}header{align-items:flex-start;flex-direction:column}.container{padding:10px}}
+.remarks-input{border:2px solid #FFD600!important;border-radius:8px}
+td.remarks-cell{border:2px solid #FFD600!important;background:#fffde7}
+.timebox{display:flex;gap:4px}.timebox select{padding:9px 6px;min-width:0;flex:1}
+#timeBox{display:block}
+.dgroup{border:1px solid #cfd6df;border-radius:12px;padding:12px;margin-top:14px;background:#fafbfc}
+.dgroup-head{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
+.dgroup-head label{max-width:170px}
+.mline{display:grid;grid-template-columns:200px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.mline .timebox{width:200px}
+.mline input{width:100%}
+.small-btn.rm{background:#ffe3e1}
+.month-btns{display:inline-flex;gap:9px;flex-wrap:wrap}
+@media(max-width:620px){.mline{grid-template-columns:1fr auto}.mline .timebox{grid-column:1/3;width:100%}}
+
+</style>
+</head>
+<body>
+<div id="loginScreen" class="auth">
+  <div class="auth-card">
+    <h1>🏏 Cricket Match Manager</h1>
+    <p>Online Database Login</p>
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="Email" required>
+      <input id="password" type="password" placeholder="Password" required>
+      <button class="primary" type="submit">Login</button>
+    </form>
+    <button id="signupBtn" class="link-btn">Create account</button>
+    <p id="authMsg"></p>
+  </div>
+</div>
+
+<div id="app" class="container hidden">
+<header>
+  <div>
+    <h1>🏏 Cricket Match Manager</h1>
+    <p>Online match database</p>
+  </div>
+  <div class="userbar"><span id="userEmail"></span><button id="logoutBtn">Logout</button></div>
+</header>
+
+<section class="card">
+<h2>Bulk Add - ek series ke saare matches ek saath</h2>
+<div class="grid">
+<label>Format<input id="bFormat" value="Cricket"></label>
+<label class="wide">Series<input id="bSeries" placeholder="Series name"></label>
+<label>ODI / T20<select id="bOdiT20"><option value="">Select</option><option>ODI</option><option>T20</option></select></label>
+<label>Expected Overs<input id="bExpected" readonly></label>
+<label>Recorded<select id="bRecorded"><option>Pending</option><option>Done</option></select></label>
+<label>Uploaded<select id="bUploaded"><option>Pending</option><option>Done</option></select></label>
+<label class="wide">Recording Remarks (sab matches ke liye, optional)<textarea id="bRemarks" class="remarks-input" rows="2"></textarea></label>
+</div>
+<div id="dateGroups"></div>
+<div class="actions">
+<button type="button" id="addDateBtn">+ Add Date</button>
+<button type="button" id="bulkSaveBtn" class="primary">Save All Matches</button>
+</div>
+</section>
+
+<section class="card">
+<h2>Match Entry (single / edit)</h2>
+<form id="matchForm">
+<div class="grid">
+<label>Format<input id="format" value="Cricket" required></label>
+<label>Date (dd-mm-yyyy)<input id="date" type="text" inputmode="numeric" placeholder="dd-mm-yyyy" maxlength="10" required></label>
+<label>Time (AM/PM)<div id="timeBox"></div></label>
+<label>Series<input id="series" placeholder="Series name" required></label>
+<label class="wide">Match<input id="match" placeholder="Team A vs Team B" required></label>
+<label>ODI / T20<select id="odiT20" required><option value="">Select</option><option>ODI</option><option>T20</option></select></label>
+<label>Expected Overs<input id="expected" type="number" readonly></label>
+<label>Recorded<select id="recorded"><option>Pending</option><option>Done</option></select></label>
+<label>Uploaded<select id="uploaded"><option>Pending</option><option>Done</option></select></label>
+<label class="wide">Recording Remarks<textarea id="remarks" class="remarks-input" rows="3" placeholder="Enter recording remarks..."></textarea></label>
+</div>
+<div class="actions">
+<button class="primary" type="submit" id="submitBtn">Add Match</button>
+<button type="button" id="clearBtn">Clear</button>
+</div>
+</form>
+</section>
+
+<section class="card">
+<div class="toolbar">
+<div><h2>All Matches <span id="count" class="badge">0</span></h2><input id="search" class="search" placeholder="Search..."></div>
+<div class="actions"><button id="importBtn">Import Excel</button><span id="monthBtns" class="month-btns"></span><button id="clearAllBtn" class="danger">Delete All</button><input id="fileInput" type="file" accept=".xlsx,.xls" hidden></div>
+</div>
+<div class="table-wrap">
+<table><thead><tr><th>Date</th><th>Time</th><th>Series</th><th>Match</th><th>ODI/T20</th><th>Expected</th><th>Recorded</th><th>Uploaded</th><th>Remarks</th><th>Action</th></tr></thead>
+<tbody id="matchTable"></tbody></table>
+</div>
+<p id="empty" class="empty">No matches found.</p>
+</section>
+<footer>Online data is stored in Supabase. | Version 11</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script>if(typeof XLSX==="undefined"){document.write('<script src="https://unpkg.com/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"><\/script>');}</script>
+<script>
+const SUPABASE_URL = "https://oevqwgnjhobexmdqiyfg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_9zhVGKfBiAOSVCP-qLs2vA_ZOuIvD9R";
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let allMatches=[], editingId=null;
+
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+
+/* ---------- Date / Time helpers (dd-mm-yyyy, 12-hour AM/PM) ---------- */
+function fmtDate(iso){ if(!iso) return ""; const [y,m,d]=String(iso).slice(0,10).split("-"); return `${d}-${m}-${y}`; }
+function fmtTime(t){ if(!t) return ""; let [h,m]=String(t).split(":").map(Number); const ap=h>=12?"PM":"AM"; h=h%12||12; return `${pad(h)}:${pad(m)} ${ap}`; }
+function parseDMY(s){
+  s=String(s||"").trim().replace(/[\/.]/g,"-");
+  let m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(m) return s;
+  m=s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/); if(!m) return null;
+  const d=+m[1],mo=+m[2],y=+m[3], dt=new Date(Date.UTC(y,mo-1,d));
+  if(dt.getUTCFullYear()!==y||dt.getUTCMonth()!==mo-1||dt.getUTCDate()!==d) return null;
+  return `${y}-${pad(mo)}-${pad(d)}`;
+}
+function todayDMY(){const n=new Date();return `${pad(n.getDate())}-${pad(n.getMonth()+1)}-${n.getFullYear()}`;}
+function autoDash(el){
+  el.addEventListener("input",()=>{
+    let v=el.value.replace(/\D/g,"").slice(0,8);
+    if(v.length>4) v=v.slice(0,2)+"-"+v.slice(2,4)+"-"+v.slice(4);
+    else if(v.length>2) v=v.slice(0,2)+"-"+v.slice(2);
+    el.value=v;
+  });
+}
+function makeTimePicker(t){
+  const w=document.createElement("span"); w.className="timebox";
+  w.innerHTML=`<select class="th">${[...Array(12)].map((_,i)=>`<option>${pad(i+1)}</option>`).join("")}</select>`+
+    `<select class="tm">${[...Array(60)].map((_,i)=>`<option>${pad(i)}</option>`).join("")}</select>`+
+    `<select class="tp"><option>AM</option><option>PM</option></select>`;
+  setTP(w,t||"09:00"); return w;
+}
+function setTP(w,t){
+  let [h,m]=(t||"09:00").split(":").map(Number); const ap=h>=12?"PM":"AM"; h=h%12||12;
+  w.querySelector(".th").value=pad(h); w.querySelector(".tm").value=pad(m||0); w.querySelector(".tp").value=ap;
+}
+function getTP(w){
+  let h=(+w.querySelector(".th").value)%12; if(w.querySelector(".tp").value==="PM") h+=12;
+  return `${pad(h)}:${w.querySelector(".tm").value}:00`;
+}
+function overs(type){return type==="ODI"?100:type==="T20"?40:null;}
+
+/* ---------- Auth ---------- */
+async function init(){
+  const {data:{session}}=await client.auth.getSession();
+  setAuthUI(session);
+}
+function setAuthUI(session){
+  $("loginScreen").classList.toggle("hidden",!!session);
+  $("app").classList.toggle("hidden",!session);
+  if(session){$("userEmail").textContent=session.user.email||"";resetForm();resetBulk();render();}
+}
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault(); $("authMsg").textContent="Logging in...";
+ const {error}=await client.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+ $("authMsg").textContent=error?error.message:"";
+});
+$("signupBtn").addEventListener("click",async()=>{
+ const email=$("email").value.trim(), password=$("password").value;
+ if(!email||password.length<6){$("authMsg").textContent="Enter email and password (minimum 6 characters).";return;}
+ const {error}=await client.auth.signUp({email,password});
+ $("authMsg").textContent=error?error.message:"Account created. Check your email if confirmation is enabled.";
+});
+$("logoutBtn").addEventListener("click",()=>client.auth.signOut());
+client.auth.onAuthStateChange((_event,session)=>setAuthUI(session));
+
+/* ---------- Single entry / edit ---------- */
+const timePicker=makeTimePicker("09:00"); $("timeBox").appendChild(timePicker);
+autoDash($("date"));
+$("odiT20").addEventListener("change",()=>{ $("expected").value=overs($("odiT20").value)??""; });
+$("matchForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const d=parseDMY($("date").value);
+ if(!d){alert("Date dd-mm-yyyy format me daalo (jaise 15-09-2026).");return;}
+ const row={format:$("format").value.trim(),match_date:d,match_time:getTP(timePicker),series:$("series").value.trim(),match:$("match").value.trim(),odi_t20:$("odiT20").value,expected_overs:Number($("expected").value)||null,recorded:$("recorded").value,uploaded:$("uploaded").value,recording_remarks:$("remarks").value.trim()};
+ let result;
+ if(editingId) result=await client.from("matches").update(row).eq("id",editingId);
+ else result=await client.from("matches").insert(row);
+ if(result.error){alert(result.error.message);return;}
+ resetForm(); await render();
+});
+function resetForm(){editingId=null;$("matchForm").reset();$("expected").value="";$("submitBtn").textContent="Add Match";$("date").value=todayDMY();setTP(timePicker,"09:00");}
+
+/* ---------- Bulk add: ek series, date-wise multiple match lines ---------- */
+$("bOdiT20").addEventListener("change",()=>{ $("bExpected").value=overs($("bOdiT20").value)??""; });
+function addLine(group,time,text){
+  const line=document.createElement("div"); line.className="mline";
+  const tp=makeTimePicker(time); line.appendChild(tp);
+  const inp=document.createElement("input"); inp.className="m-text"; inp.placeholder="Team A vs Team B"; inp.value=text||""; line.appendChild(inp);
+  const rm=document.createElement("button"); rm.type="button"; rm.className="small-btn rm"; rm.textContent="✕";
+  rm.onclick=()=>{ if(group.querySelectorAll(".mline").length>1) line.remove(); else inp.value=""; };
+  line.appendChild(rm);
+  group.querySelector(".lines").appendChild(line);
+  return inp;
+}
+function addDateGroup(dateStr){
+  const g=document.createElement("div"); g.className="dgroup";
+  g.innerHTML=`<div class="dgroup-head"><label>Date (dd-mm-yyyy)<input class="g-date" inputmode="numeric" placeholder="dd-mm-yyyy" maxlength="10"></label>
+   <button type="button" class="small-btn add-line">+ Match line</button>
+   <button type="button" class="small-btn rm rm-date">Remove date</button></div><div class="lines"></div>`;
+  const di=g.querySelector(".g-date"); di.value=dateStr||""; autoDash(di);
+  g.querySelector(".add-line").onclick=()=>{
+    const last=g.querySelector(".mline:last-child .timebox");
+    addLine(g,last?getTP(last).slice(0,5):"09:00","").focus();
+  };
+  g.querySelector(".rm-date").onclick=()=>{ if(document.querySelectorAll(".dgroup").length>1) g.remove(); else resetBulkGroups(); };
+  $("dateGroups").appendChild(g);
+  addLine(g,"09:00","");
+  return g;
+}
+function resetBulkGroups(){ $("dateGroups").innerHTML=""; addDateGroup(""); }
+function resetBulk(){ $("bExpected").value=overs($("bOdiT20").value)??""; if(!document.querySelector(".dgroup")) addDateGroup(""); }
+$("addDateBtn").addEventListener("click",()=>{ const g=addDateGroup(""); g.querySelector(".g-date").focus(); });
+$("bulkSaveBtn").addEventListener("click",async()=>{
+  const series=$("bSeries").value.trim(), type=$("bOdiT20").value;
+  if(!series){alert("Series name daalo.");return;}
+  if(!type){alert("ODI ya T20 select karo.");return;}
+  const rows=[];
+  for(const g of document.querySelectorAll(".dgroup")){
+    const raw=g.querySelector(".g-date").value.trim();
+    const lines=[...g.querySelectorAll(".mline")].filter(l=>l.querySelector(".m-text").value.trim());
+    if(!raw && !lines.length) continue;
+    const d=parseDMY(raw);
+    if(!d){alert("Date galat hai: '"+raw+"'. dd-mm-yyyy me daalo.");return;}
+    for(const l of lines){
+      rows.push({format:$("bFormat").value.trim()||"Cricket",match_date:d,match_time:getTP(l.querySelector(".timebox")),series,match:l.querySelector(".m-text").value.trim(),odi_t20:type,expected_overs:overs(type),recorded:$("bRecorded").value,uploaded:$("bUploaded").value,recording_remarks:$("bRemarks").value.trim()});
+    }
+  }
+  if(!rows.length){alert("Kam se kam ek match line bharo.");return;}
+  $("bulkSaveBtn").disabled=true;
+  const {error}=await client.from("matches").insert(rows);
+  $("bulkSaveBtn").disabled=false;
+  if(error){alert(error.message);return;}
+  alert(rows.length+" match(es) add ho gaye.");
+  resetBulkGroups(); $("bRemarks").value=""; await render();
+});
+
+/* ---------- Same date+time wali rows sheet ke order me rahein (seq column ho to) ---------- */
+async function fetchOrdered(){
+  let q=await client.from("matches").select("*").order("match_date",{ascending:true}).order("match_time",{ascending:true}).order("seq",{ascending:true});
+  if(q.error) q=await client.from("matches").select("*").order("match_date",{ascending:true}).order("match_time",{ascending:true});
+  return q;
+}
+
+/* ---------- Table ---------- */
+async function render(){
+ const {data,error}=await fetchOrdered();
+ if(error){alert(error.message);return}
+ allMatches=data||[]; renderMonthButtons();
+ const q=$("search").value.toLowerCase().trim();
+ const rows=allMatches.filter(r=>!q||[...Object.values(r),fmtDate(r.match_date),fmtTime(r.match_time)].some(v=>String(v??"").toLowerCase().includes(q)));
+ $("count").textContent=allMatches.length;$("empty").style.display=rows.length?"none":"block";
+ $("matchTable").innerHTML=rows.map(r=>`<tr><td>${esc(fmtDate(r.match_date))}</td><td>${esc(fmtTime(r.match_time))}</td><td>${esc(r.series)}</td><td>${esc(r.match)}</td><td>${esc(r.odi_t20)}</td><td>${esc(r.expected_overs)}</td><td>${esc(r.recorded)}</td><td>${esc(r.uploaded)}</td><td class="remarks-cell">${esc(r.recording_remarks)}</td><td><button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button></td></tr>`).join("");
+}
+window.editMatch=async id=>{
+ const r=allMatches.find(x=>x.id===id);if(!r)return;editingId=id;
+ $("format").value=r.format||"Cricket";$("date").value=fmtDate(r.match_date);setTP(timePicker,(r.match_time||"09:00").slice(0,5));$("series").value=r.series||"";$("match").value=r.match||"";$("odiT20").value=r.odi_t20||"";$("expected").value=r.expected_overs||"";$("recorded").value=r.recorded||"Pending";$("uploaded").value=r.uploaded||"Pending";$("remarks").value=r.recording_remarks||"";$("submitBtn").textContent="Update Match";
+ $("matchForm").scrollIntoView({behavior:"smooth"});
+};
+window.deleteMatch=async id=>{if(confirm("Delete this match?")){const {error}=await client.from("matches").delete().eq("id",id);if(error)alert(error.message);else render();}};
+$("clearBtn").addEventListener("click",resetForm);$("search").addEventListener("input",render);
+$("clearAllBtn").addEventListener("click",async()=>{if(!confirm("Delete ALL your matches?"))return;const {error}=await client.from("matches").delete().not("id","is",null);if(error)alert(error.message);else render();});
+
+/* ---------- Excel export (same column layout as your Sep2026 sheet) ---------- */
+async function exportMonth(ym){
+ if(typeof XLSX==="undefined"){alert("Excel library load nahi hui. Internet check karo aur page refresh karo.");return;}
+ const res=await fetchOrdered();
+ if(res.error){alert(res.error.message);return;}
+ const data=(res.data||[]).filter(r=>String(r.match_date).startsWith(ym));
+ if(!data.length){alert("Is month me koi match nahi hai.");return;}
+ const [yy,mo]=ym.split("-"); const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+ const monthName=MN[+mo-1], sheetName=monthName.slice(0,3)+yy;
+ data.sort((a,b)=>String(a.match_date).localeCompare(String(b.match_date))||String(a.match_time||"99").localeCompare(String(b.match_time||"99")));
+ const blk={style:"thin",color:{rgb:"000000"}}, yel={style:"medium",color:{rgb:"FFD600"}};
+ const border={top:blk,bottom:blk,left:blk,right:blk};
+ const hdrStyle={font:{name:"Arial",sz:13,bold:true},fill:{patternType:"solid",fgColor:{rgb:"FFC000"}},border,alignment:{horizontal:"center",vertical:"center"}};
+ const base={font:{name:"Arial",sz:12},alignment:{horizontal:"center",vertical:"center"}};
+ const left={...base,alignment:{horizontal:"left",vertical:"center"}};
+ const remStyle={font:{name:"Arial",sz:12},border:{top:yel,bottom:yel,left:yel,right:yel},alignment:{horizontal:"left",vertical:"center",wrapText:true}};
+ const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks"];
+ const aoa=[heads.map(h=>({v:h,t:"s",s:hdrStyle}))];
+ for(const r of (data||[])){
+   const serial=r.match_date?Math.round((Date.UTC(...r.match_date.split("-").map((x,i)=>i==1?+x-1:+x))-Date.UTC(1899,11,30))/86400000):"";
+   aoa.push([
+     serial===""?{v:"",t:"s",s:base}:{v:serial,t:"n",z:"dd-mm-yyyy",s:base},
+     (r.match_time?{v:(()=>{const [hh,mm,ss]=String(r.match_time).split(":").map(Number);return ((hh*3600)+(mm*60)+(ss||0))/86400;})(),t:"n",z:"h:mm AM/PM",s:base}:{v:"",t:"s",s:base}),
+     {v:r.series||"",t:"s",s:left},{v:r.match||"",t:"s",s:left},
+     {v:r.odi_t20||"",t:"s",s:left},
+     r.expected_overs?{v:r.expected_overs,t:"n",s:left}:{v:"",t:"s",s:left},
+     {v:r.recorded||"",t:"s",s:base},{v:r.uploaded||"",t:"s",s:base},
+     {v:r.recording_remarks||"",t:"s",s:remStyle}
+   ]);
+ }
+ const ws=XLSX.utils.aoa_to_sheet(aoa);
+ ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14].map(w=>({wch:w}));
+ ws["!rows"]=[{hpt:24}];
+ const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,sheetName);
+ const fname=`${monthName.toUpperCase()}${yy}_Cricket_${pad(new Date().getHours())}${pad(new Date().getMinutes())}${pad(new Date().getSeconds())}.xlsx`;
+ const arr=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+ const blob=new Blob([arr],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+ const url=URL.createObjectURL(blob), link=document.createElement("a");
+ link.href=url; link.download=fname; document.body.appendChild(link); link.click();
+ setTimeout(()=>{link.remove();URL.revokeObjectURL(url);},3000);
+ alert("Excel ban gayi: "+fname+"\nRows: "+data.length);
+}
+
+/* ---------- Month-wise download buttons ---------- */
+function renderMonthButtons(){
+  const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const months=[...new Set(allMatches.map(r=>String(r.match_date).slice(0,7)))].filter(Boolean).sort();
+  $("monthBtns").innerHTML=months.map(ym=>{const [y,m]=ym.split("-");return `<button class="primary" data-ym="${ym}">⬇ ${MN[+m-1]} ${y} Excel</button>`;}).join(" ");
+  $("monthBtns").querySelectorAll("button").forEach(b=>b.onclick=()=>exportMonth(b.dataset.ym));
+}
+
+/* ---------- Excel import ---------- */
+$("importBtn").addEventListener("click",()=>$("fileInput").click());
+function statusOf(v){
+  const s=String(v??"").trim();
+  if(!s) return {val:"Pending",note:""};
+  if(/^done$/i.test(s)) return {val:"Done",note:""};
+  if(/^pending$/i.test(s)) return {val:"Pending",note:""};
+  return {val:"Pending",note:s};
+}
+function typeOf(v){
+  const s=String(v??"").trim().toUpperCase();
+  if(s.includes("ODI")) return "ODI";
+  if(s.includes("T20")) return "T20";
+  return "";
+}
+$("fileInput").addEventListener("change",async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+  if(typeof XLSX==="undefined"){alert("Excel library load nahi hui. Internet check karo aur page refresh karo.");return;}
+  const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{defval:"",raw:true});
+  const norm=o=>{const r={};for(const k in o)r[String(k).trim().toLowerCase().replace(/\s+/g," ")]=o[k];return r;};
+  const {data:existing,error:ee}=await client.from("matches").select("match_date,match_time,series,match");
+  if(ee){alert(ee.message);return;}
+  const kf=(d,t,s,m)=>[d,String(t||"").slice(0,5),String(s).trim().toLowerCase(),String(m).trim().toLowerCase()].join("|");
+  const seen=new Set((existing||[]).map(r=>kf(r.match_date,r.match_time,r.series,r.match)));
+  const out=[],bad=[];let skipped=0;
+  rows.forEach((raw,i)=>{
+    const x=norm(raw);
+    const series=String(x["series"]||"").trim(), match=String(x["match"]||"").trim();
+    if(!series&&!match) return;
+    const d=excelDate(x["date"]);
+    if(!d){bad.push("Row "+(i+2)+": date samajh nahi aayi");return;}
+    const type=typeOf(x["odi/t20"]||x["odi / t20"]||x["odi t20"]);
+    if(!type){bad.push("Row "+(i+2)+": ODI/T20 samajh nahi aaya");return;}
+    const t=excelTime(x["time"]);
+    const rec=statusOf(x["recorded"]||x["record"]), upl=statusOf(x["uploaded"]||x["upload"]);
+    const remarks=[String(x["recording remarks"]||"").trim(),rec.note,upl.note].filter(Boolean).join(" | ");
+    const ex=Number(x["expected overs"]||x["expected"]);
+    const key=kf(d,t,series,match);
+    if(seen.has(key)){skipped++;return;}
+    seen.add(key);
+    out.push({format:String(x["format"]||"Cricket").trim()||"Cricket",match_date:d,match_time:t,series,match,odi_t20:type,expected_overs:(ex===40||ex===100)?ex:overs(type),recorded:rec.val,uploaded:upl.val,recording_remarks:remarks});
+  });
+  let n=0;
+  for(let k=0;k<out.length;k+=100){
+    const chunk=out.slice(k,k+100);
+    const {error}=await client.from("matches").insert(chunk);
+    if(!error){n+=chunk.length;continue;}
+    for(const r of chunk){const {error:e2}=await client.from("matches").insert(r); if(e2) bad.push(r.series+" | "+r.match+": "+e2.message); else n++;}
+  }
+  alert(n+" match(es) import hue.\n"+skipped+" pehle se the (skip).\n"+bad.length+" row(s) me problem."+(bad.length?"\n\n"+bad.slice(0,5).join("\n"):""));
+  render();
+ }catch(err){alert("Import failed: "+err.message)} e.target.value="";
+});
+function excelDate(v){
+  if(typeof v==="number"){const d=XLSX.SSF.parse_date_code(v);return d?`${d.y}-${pad(d.m)}-${pad(d.d)}`:null}
+  return parseDMY(v);
+}
+function excelTime(v){
+  if(typeof v==="number"){const mins=Math.round((v%1)*1440);return `${pad(Math.floor(mins/60)%24)}:${pad(mins%60)}:00`;}
+  const m=String(v||"").trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?$/);
+  if(!m) return null;
+  let h=+m[1]; const ap=(m[3]||"").toUpperCase();
+  if(ap==="PM"&&h<12)h+=12; if(ap==="AM"&&h===12)h=0;
+  return `${pad(h)}:${m[2]}:00`;
+}
+init();
+
+</script>
+</body>
+</html>
