@@ -1,6 +1,6 @@
-/* Cricket Match Manager v21 service worker: app-shell cache + offline support.
+/* Cricket Match Manager v24 service worker: app-shell cache + offline support.
    Supabase / CricAPI requests are never cached (always live data). */
-const CACHE = "cmm-v21";
+const CACHE = "cmm-v25";
 const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png"];
 const CDN = ["cdn.jsdelivr.net", "unpkg.com", "fonts.googleapis.com", "fonts.gstatic.com"];
 

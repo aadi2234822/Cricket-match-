@@ -55,7 +55,7 @@ button:disabled{opacity:.55;cursor:wait}
 .search{width:320px;display:block}
 .badge{font-family:'Barlow',Arial,sans-serif;font-size:14px;font-weight:700;background:var(--turf);color:#fff;padding:2px 10px;border-radius:20px;vertical-align:middle}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
-table{width:100%;border-collapse:collapse;min-width:1400px;background:#fff}
+table{width:100%;border-collapse:collapse;min-width:1800px;background:#fff}
 th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
 th{background:#eaf0e6;color:var(--turf-dark);font-weight:700;white-space:nowrap}
 tbody tr:nth-child(even){background:#fafbf8}
@@ -95,7 +95,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 @media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.toolbar{flex-direction:column;align-items:stretch}.search{width:100%}}
 @media(max-width:700px){
  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px}
- table{min-width:1400px;width:1400px;border-collapse:collapse}
+ table{min-width:1800px;width:1800px;border-collapse:collapse}
  thead{display:table-header-group}
  tbody{display:table-row-group}
  tbody tr{display:table-row;border:0;border-radius:0;margin:0;padding:0;background:#fff!important}
@@ -134,6 +134,23 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 .modal h3{margin:0 0 4px;font-family:'Barlow Condensed',Arial,sans-serif;font-size:24px;color:var(--turf-dark)}
 .ck-row{display:flex;flex-direction:row;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-weight:500}
 .ck-row input{width:22px;min-height:0;height:22px;accent-color:var(--turf)}
+.ucard{border:1px solid var(--line);border-left:4px solid var(--turf);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
+.ucard.pend{border-left-color:var(--amber);background:#fffaf0}
+.uhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;word-break:break-all}
+.ugrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:end}
+.uperms{display:flex;flex-wrap:wrap;gap:6px 16px;margin:10px 0}
+.uperms label{flex-direction:row;align-items:center;gap:6px;font-weight:500}
+.uperms input,.ugrid .inline-check input{width:18px;min-height:0;height:18px;accent-color:var(--turf)}
+@media(max-width:620px){.ugrid{grid-template-columns:1fr}}
+.tl-row{display:flex;align-items:center;margin-bottom:6px}.tl-lab{width:96px;font-size:12px;font-weight:700;flex:none}
+.tl-lane{position:relative;flex:1;height:34px;background:#f1f5f2;border-radius:6px;background-image:linear-gradient(90deg,#d3ddd6 1px,transparent 1px);background-size:12.5% 100%}
+.tl-bar{position:absolute;top:3px;bottom:3px;border-radius:5px;padding:2px 6px;font-size:11px;overflow:hidden;white-space:nowrap;color:#fff;background:var(--turf);border:1px solid #0003}
+.tl-bar.s-Scheduled{background:#5b7bd6}.tl-bar.s-Recording{background:var(--amber)}.tl-bar.s-Recorded,.tl-bar.s-Editing{background:#2b7bb9}
+.statsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.chart h3{margin:0 0 6px;font-size:15px}
+.crow{display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0}.crow span{width:92px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.crow b{width:28px;text-align:right}
+.cbar{background:#e8eee9;border-radius:6px;overflow:hidden;height:12px;flex:1}.cbar i{display:block;height:100%;background:var(--turf)}
+#adm2 h3{margin:18px 0 8px;font-size:17px;color:var(--turf-dark)}
+.strg label{display:flex;flex-direction:row;gap:6px;align-items:center;font-weight:500;width:auto}.strg input{width:18px;min-height:0;height:18px;accent-color:var(--turf)}
 </style>
 </head>
 <body>
@@ -142,14 +159,21 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
     <h1>🏏 Cricket Match Manager</h1>
     <p>Sign in to your match database</p>
     <form id="loginForm">
-      <input id="email" type="email" placeholder="Email" required>
+      <input id="email" type="text" placeholder="Username or email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
       <input id="password" type="password" placeholder="Password" required>
       <button class="primary" type="submit">Login</button>
     </form>
     <button id="signupBtn" class="link-btn">Create account</button>
     <p id="authMsg"></p>
+    <p class="rem-note">Use a username (3-20 letters or numbers only) or an email address. Password: minimum 6 characters. New accounts must be approved by an admin before they can see any matches.</p>
   </div>
 </div>
+
+<div id="pendingScreen" class="auth hidden"><div class="auth-card">
+  <h1>Waiting for approval</h1><p id="pendEmail"></p>
+  <p>Your account is created. An admin must approve it and give you permissions before you can see matches.</p>
+  <div class="actions"><button id="pendRefresh" class="primary">Check again</button><button id="pendLogout">Logout</button></div>
+</div></div>
 
 <div id="app" class="container hidden">
 <header>
@@ -157,10 +181,14 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
     <h1>🏏 Cricket Match Manager</h1>
     <p>Online match database</p>
   </div>
-  <div class="userbar"><span id="userEmail"></span><button id="installBtn" class="hidden">⬇ Install app</button><button id="logoutBtn">Logout</button></div>
+  <div class="userbar"><span id="roleBadge" class="pill done hidden"></span><span id="userEmail"></span><button id="installBtn" class="hidden">⬇ Install app</button><button id="logoutBtn">Logout</button></div>
 </header>
 <div id="offlineBar" class="notice off hidden">Offline - showing the last synced data (view only). It will refresh when you are back online.</div>
+<div id="rolesBar" class="notice warn hidden">Admin / user roles are not enabled yet: run add_roles.sql in Supabase SQL Editor. Until then everyone signed in has full access to their own data.</div>
+<div id="pendBar" class="notice warn hidden" style="cursor:pointer"></div>
 <div id="extraBar" class="notice warn hidden">Checklist and upload link need one-time setup: run add_v21_columns.sql in Supabase SQL Editor.</div>
+<div id="camBar" class="notice warn hidden">Camera option needs one-time setup: run add_camera_column.sql in Supabase SQL Editor.</div>
+<div id="v24Bar" class="notice warn hidden">Operators, live-stream platforms and the new admin tools need one-time setup: run add_v24_core.sql in Supabase SQL Editor.</div>
 <div id="statusBar" class="notice warn hidden">Status workflow needs one-time setup: run add_status_column.sql in Supabase SQL Editor. Until then only Scheduled / Recording / Recorded / Editing / Uploaded work.</div>
 
 <section class="card">
@@ -183,9 +211,16 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
  <label class="inline-check" style="align-self:end"><input type="checkbox" id="remOverdue" checked> Daily pending summary</label>
  <div class="actions" style="margin:0;align-items:end"><button id="remEnableBtn" class="primary">Enable reminders</button><button id="remTestBtn">Test</button></div>
 </div>
+<div class="grid" style="margin-top:10px"><label>Upload target (hours after match ends)<select id="dueHrs"><option>12</option><option selected>24</option><option>48</option><option>72</option></select></label><label class="inline-check" style="align-self:end"><input type="checkbox" id="remMine"> Reminders only for my matches</label></div>
 <p id="remMsg" class="rem-note"></p>
 <p class="rem-note">Reminders fire while the app is open or installed and running on this device. iPhone: Share &rarr; Add to Home Screen first. Real push while fully closed needs a server (possible future upgrade).</p>
 </section>
+
+<section class="card" id="secPlan"><h2>Camera Planner</h2>
+<div class="actions" style="margin:0 0 10px"><button id="planPrev">&larr;</button><input type="date" id="planDate" style="width:auto"><button id="planNext">&rarr;</button><button id="planSuggest" class="primary">Suggest cameras</button></div>
+<div style="overflow-x:auto"><div id="planBox" style="min-width:860px"></div></div><div id="planOut"></div></section>
+
+<section class="card" id="secStats"><h2>Analytics</h2><div id="statsBox" class="statsgrid"></div></section>
 
 <section class="card">
 <h2>Match Calendar & Countdown</h2>
@@ -196,7 +231,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 <p id="calendarMsg" class="status-msg"></p>
 </section>
 
-<section class="card">
+<section class="card" id="secAuto">
 <h2>Auto fetch: enter a series name to load all its matches</h2>
 <div class="grid">
 <label class="wide">Series name<input id="afSeries" placeholder="e.g. Nepal Premier League 2026"></label>
@@ -213,7 +248,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 <div class="table-wrap hidden" id="afPrevWrap"><table style="min-width:600px"><thead><tr><th>Date</th><th>Time</th><th>Match</th><th>Type</th></tr></thead><tbody id="afPrev"></tbody></table></div>
 </section>
 
-<section class="card">
+<section class="card" id="secBulk">
 <h2>Bulk add: many matches in one series</h2>
 <div class="grid">
 <label>Format<input id="bFormat" value="Cricket"></label>
@@ -231,7 +266,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 </div>
 </section>
 
-<section class="card">
+<section class="card" id="secEntry">
 <h2>Match Entry (single / edit)</h2>
 <form id="matchForm">
 <div class="grid">
@@ -243,6 +278,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 <label>ODI / T20<select id="odiT20" required><option value="">Select</option><option>ODI</option><option>T20</option></select></label>
 <label>Expected Overs<input id="expected" type="number" readonly></label>
 <label>Status<select id="status"><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select></label>
+<label>Camera<select id="camera"></select></label>
 <label>Recorded<select id="recorded"><option>Pending</option><option>Done</option></select></label>
 <label>Uploaded<select id="uploaded"><option>Pending</option><option>Done</option></select></label>
 <label class="wide">Recording Remarks<textarea id="remarks" class="remarks-input" rows="3" placeholder="Enter recording remarks..."></textarea></label>
@@ -256,24 +292,34 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 
 <section class="card">
 <div class="toolbar">
-<div><h2>All Matches <span id="count" class="badge">0</span></h2><input id="search" class="search" placeholder="Search..."><select id="statusFilter" class="search" style="margin-top:8px"><option value="">All statuses</option><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select></div>
+<div><h2>All Matches <span id="count" class="badge">0</span></h2><input id="search" class="search" placeholder="Search..."><select id="cameraFilter" class="search" style="margin-top:8px"></select><select id="operatorFilter" class="search" style="margin-top:8px"></select><select id="streamFilter" class="search" style="margin-top:8px"></select><select id="statusFilter" class="search" style="margin-top:8px"><option value="">All statuses</option><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select></div>
 <div class="actions"><button id="importBtn">Import Excel</button><button id="backupBtn">Backup JSON</button><button id="restoreBtn">Restore JSON</button><button id="clearAllBtn" class="danger">Delete All</button><input id="fileInput" type="file" accept=".xlsx,.xls" hidden><input id="backupInput" type="file" accept=".json,application/json" hidden></div>
 </div>
-<div class="grid" style="margin:12px 0">
+<div class="grid" id="reportBox" style="margin:12px 0">
 <label>Report from<input type="date" id="reportFrom"></label><label>Report to<input type="date" id="reportTo"></label><div class="actions" style="align-items:end"><button id="rangeExcelBtn" class="primary">Download date-range Excel</button></div>
 </div>
 <div id="bulkBar" class="bulkbar hidden"><strong id="selCount"></strong>
  <select id="bulkStatus"><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select><button id="bulkStatusBtn">Set status</button>
+ <select id="bulkCamera"></select><button id="bulkCameraBtn">Set camera</button>
  <input id="bulkShift" type="number" value="1" title="Days (negative = earlier)" style="width:70px"><button id="bulkShiftBtn">Shift days</button>
  <button id="bulkDelBtn" class="danger">Delete</button><button id="bulkClearBtn">Clear</button></div>
 <div id="monthDownloadButtons" class="month-downloads"></div>
 <div class="table-wrap">
-<table><thead><tr><th><input type="checkbox" id="selAll" class="rowchk" title="Select all shown"></th><th>Date</th><th>Time</th><th>Series</th><th>Match</th><th>ODI/T20</th><th>Expected</th><th>Recorded</th><th>Uploaded</th><th>Status</th><th>Checklist</th><th>Remarks</th><th>Action</th></tr></thead>
+<table><thead><tr><th><input type="checkbox" id="selAll" class="rowchk" title="Select all shown"></th><th>Date</th><th>Time</th><th>Series</th><th>Match</th><th>ODI/T20</th><th>Expected</th><th>Recorded</th><th>Uploaded</th><th>Camera</th><th>Operator</th><th>Live on</th><th>Status</th><th>Checklist</th><th>Remarks</th><th>Action</th></tr></thead>
 <tbody id="matchTable"></tbody></table>
 </div>
 <p id="empty" class="empty">No matches found.</p>
 </section>
-<footer>Online data is stored in Supabase with per-user access rules. | Version 21</footer>
+
+<section class="card hidden" id="secAdmin">
+<h2>Admin: Users &amp; Permissions <span id="pendBadge" class="badge hidden"></span></h2>
+<p class="rem-note" style="margin-top:0">Approve new accounts, choose a role and tick what each user may do. Un-approving blocks a user. Admins always have full access.</p>
+<div class="actions" style="margin:0 0 12px"><button id="usersRefresh">Refresh users</button></div>
+<div id="usersList"></div>
+</section>
+
+<section class="card hidden" id="secAdmin2"><h2>Admin tools</h2><div id="adm2"></div></section>
+<footer>Online data is stored in Supabase with per-user access rules. | Version 25</footer>
 <div id="toast" class="toast hidden"><span id="toastMsg"></span><button id="toastUndo">Undo</button></div>
 <div id="ckModal" class="modal hidden"><div class="box">
  <h3 id="ckTitle"></h3><p style="margin:0 0 8px;color:var(--muted);font-size:14px">Checklist and upload link</p>
@@ -282,6 +328,11 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
  <label class="ck-row"><input type="checkbox" id="ck_thumb">Thumbnail ready</label>
  <label class="ck-row"><input type="checkbox" id="ck_title">Title &amp; description</label>
  <label class="ck-row"><input type="checkbox" id="ck_upl">Uploaded &amp; checked</label>
+ <div style="margin-top:12px;font-weight:700">Live stream platforms</div>
+ <div id="strBox" class="strg" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0"></div>
+ <label>Live stream link<input id="strLink" type="url" placeholder="https://..."></label>
+ <div class="actions" style="margin:8px 0 0"><button type="button" id="genTitleBtn">Generate title &amp; description</button></div>
+ <textarea id="genOut" class="hidden" rows="6" readonly style="margin-top:8px"></textarea>
  <label style="margin-top:12px">Upload link (YouTube etc.)<input id="ckLink" type="url" placeholder="https://..."></label>
  <div class="actions"><button id="ckSave" class="primary">Save</button><button id="ckCancel">Cancel</button></div>
 </div></div>
@@ -343,21 +394,26 @@ async function init(){
   const {data:{session}}=await client.auth.getSession();
   setAuthUI(session);
 }
-function setAuthUI(session){
+function setAuthUI_base(session){
   $("loginScreen").classList.toggle("hidden",!!session);
   $("app").classList.toggle("hidden",!session);
   if(session){$("userEmail").textContent=session.user.email||"";resetForm();resetBulk();render();}
 }
 $("loginForm").addEventListener("submit",async e=>{
- e.preventDefault(); $("authMsg").textContent="Logging in...";
- const {error}=await client.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
- $("authMsg").textContent=error?error.message:"";
+ e.preventDefault();
+ const em=toLoginEmail($("email").value); if(!em){$("authMsg").textContent="Username: 3-20 letters or numbers only (no spaces, dots or symbols), or a full email address.";return;}
+ $("authMsg").textContent="Logging in...";
+ const {error}=await client.auth.signInWithPassword({email:em,password:$("password").value});
+ $("authMsg").textContent=error?(/invalid login/i.test(error.message)?"Wrong username/email or password.":/valid|format/i.test(error.message)?`Supabase rejected "${em}" as an invalid address (${error.message}).`:error.message):"";
 });
 $("signupBtn").addEventListener("click",async()=>{
- const email=$("email").value.trim(), password=$("password").value;
- if(!email||password.length<6){$("authMsg").textContent="Enter email and password (minimum 6 characters).";return;}
- const {error}=await client.auth.signUp({email,password});
- $("authMsg").textContent=error?error.message:"Account created. Check your email if confirmation is enabled.";
+ const email=toLoginEmail($("email").value), password=$("password").value;
+ if(!email){$("authMsg").textContent="Username: 3-20 letters or numbers only (no spaces, dots or symbols), or a full email address.";return;}
+ if(password.length<6){$("authMsg").textContent="Password must be at least 6 characters.";return;}
+ $("authMsg").textContent="Creating account...";
+ const {data,error}=await client.auth.signUp({email,password});
+ if(error){$("authMsg").textContent=/valid|format|invalid/i.test(error.message)?`Supabase rejected "${email}" as an invalid address (${error.message}). Try a simple username like raju123 or a real email. If usernames keep failing, the admin should change USERNAME_DOMAIN in index.html.`:error.message;return;}
+ $("authMsg").textContent=(data&&data.session)?"Account created. An admin must approve it before you can see matches.":"Account created, but Supabase is still waiting for email confirmation. Admin: turn OFF \"Confirm email\" in Supabase > Authentication > Sign In / Providers > Email, then try logging in.";
 });
 $("logoutBtn").addEventListener("click",()=>client.auth.signOut());
 client.auth.onAuthStateChange((_event,session)=>setAuthUI(session));
@@ -368,13 +424,15 @@ autoDash($("date"));
 $("odiT20").addEventListener("change",()=>{ $("expected").value=overs($("odiT20").value)??""; });
 $("matchForm").addEventListener("submit",async e=>{
  e.preventDefault();
+ if(editingId?!can("edit"):!can("add")){alert("You do not have permission to "+(editingId?"edit":"add")+" matches.");return;}
  const d=parseDMY($("date").value);
  if(!d){alert("Enter the date as dd-mm-yyyy (for example 15-09-2026).");return;}
  const row={format:$("format").value.trim(),match_date:d,match_time:getTP(timePicker),series:$("series").value.trim(),match:$("match").value.trim(),odi_t20:$("odiT20").value,expected_overs:Number($("expected").value)||null,recorded:$("recorded").value,uploaded:$("uploaded").value,recording_remarks:$("remarks").value.trim()};
  const stSel=$("status").value; if(hasStatus!==false&&stSel) row.status=stSel;
+ if(hasCam!==false) row.camera=$("camera").value;
   const duplicate=allMatches.find(r=>r.id!==editingId&&matchKey(r)===matchKey(row));
   if(duplicate){alert("Possible duplicate found: "+duplicate.series+" | "+duplicate.match+" | "+fmtDate(duplicate.match_date)+". Please check before saving.");return;}
-  {const cl=INACTIVE.includes($("status").value)?[]:clashesWith(row,editingId); if(cl.length&&!confirm("⚠ Time overlap with: "+cl.slice(0,3).map(o=>o.match+" ("+fmtTime(o.match_time)+")").join(", ")+"\n\nSave anyway?"))return;}
+  {const cl=INACTIVE.includes($("status").value)?[]:clashesWith(row,editingId); if(cl.length&&!confirm("⚠ Time overlap with: "+cl.slice(0,3).map(o=>o.match+" ("+fmtTime(o.match_time)+")"+($("camera").value&&o.camera===$("camera").value?" - SAME CAMERA":"")).join(", ")+"\n\nSave anyway?"))return;}
   let result;
   if(editingId){
     const old=allMatches.find(r=>r.id===editingId);
@@ -383,7 +441,8 @@ $("matchForm").addEventListener("submit",async e=>{
       const h=await client.from("match_reschedule_history").insert(hist);
       if(h.error){alert("Reschedule history table is not ready. Run setup_reschedule_history.sql in Supabase first. Details: "+h.error.message);return;}
     }
-    result=await client.from("matches").update(row).eq("id",editingId);
+    result=await client.from("matches").update(row).eq("id",editingId).select("id");
+    if(!result.error&&!(result.data&&result.data.length)){alert("Not allowed: you do not have permission to edit this match.");return;}
   } else result=await client.from("matches").insert(row);
  if(result.error){alert(result.error.message);return;}
  resetForm(); await render();
@@ -467,23 +526,23 @@ async function render(){
   if(c){data=c;setOffline(true);}else{alert(error.message||error);return;}
  } else {setOffline(false);saveCache(data);}
  allMatches=data||[];
- if(!offlineMode){ if(allMatches.length){hasStatus=('status' in allMatches[0]);hasExtra=('checklist' in allMatches[0]);} else {const pr=await client.from("matches").select("status").limit(1); hasStatus=!pr.error; const pe=await client.from("matches").select("checklist,video_link").limit(1); hasExtra=!pe.error;} $("statusBar").classList.toggle("hidden",hasStatus!==false); $("extraBar").classList.toggle("hidden",hasExtra!==false); }
- updateDashboard(allMatches); renderCalendar(allMatches); renderAttention(allMatches); checkReminders();
+ if(!offlineMode){ if(allMatches.length){hasStatus=('status' in allMatches[0]);hasExtra=('checklist' in allMatches[0]);hasCam=('camera' in allMatches[0]);hasV24=('operator' in allMatches[0]);} else {const pr=await client.from("matches").select("status").limit(1); hasStatus=!pr.error; const pe=await client.from("matches").select("checklist,video_link").limit(1); hasExtra=!pe.error; const pc=await client.from("matches").select("camera").limit(1); hasCam=!pc.error; const p4=await client.from("matches").select("operator,stream_platforms,stream_link").limit(1); hasV24=!p4.error;} $("statusBar").classList.toggle("hidden",hasStatus!==false); $("extraBar").classList.toggle("hidden",hasExtra!==false); $("camBar").classList.toggle("hidden",hasCam!==false); $("v24Bar").classList.toggle("hidden",hasV24!==false); }
+ updateDashboard(allMatches); renderCalendar(allMatches); renderAttention(allMatches); renderPlan(); renderStats(allMatches); checkReminders();
  const q=$("search").value.toLowerCase().trim();
- const sf=$("statusFilter").value; const rows=allMatches.filter(r=>(!sf||effStatus(r)===sf)&&(!q||[...Object.values(r),fmtDate(r.match_date),fmtTime(r.match_time)].some(v=>String(v??"").toLowerCase().includes(q))));
+ const sf=$("statusFilter").value, cf=$("cameraFilter").value, opf=$("operatorFilter").value, pf=$("streamFilter").value; const rows=allMatches.filter(r=>(!sf||effStatus(r)===sf)&&(!cf||(cf==="__none"?!r.camera:r.camera===cf))&&(!opf||(opf==="__me"?isMine(r):opf==="__none"?!r.operator:r.operator===opf))&&(!pf||String(r.stream_platforms||"").split(", ").includes(pf))&&(!q||[...Object.values(r),fmtDate(r.match_date),fmtTime(r.match_time)].some(v=>String(v??"").toLowerCase().includes(q))));
  $("count").textContent=allMatches.length;$("empty").style.display=rows.length?"none":"block";
  renderMonthDownloadButtons(allMatches);
  const pill=v=>`<span class="pill ${v==="Done"?"done":"pending"}">${esc(v)}</span>`;
- $("matchTable").innerHTML=rows.map(r=>`<tr><td><input type="checkbox" class="rowchk" data-id="${r.id}"${sel.has(r.id)?" checked":""}></td><td data-label="Date">${esc(fmtDate(r.match_date))}</td><td data-label="Time">${esc(fmtTime(r.match_time))}</td><td data-label="Series">${esc(r.series)}</td><td data-label="Match">${esc(r.match)}${clashSet.has(r.id)?' <span title="Overlaps another match" style="color:var(--leather)">⚠</span>':""}</td><td data-label="ODI/T20">${esc(r.odi_t20)}</td><td data-label="Expected">${esc(r.expected_overs)}</td><td data-label="Recorded">${pill(r.recorded)}</td><td data-label="Uploaded">${pill(r.uploaded)}</td><td data-label="Status">${statusCell(r)}</td><td data-label="Checklist">${ckCell(r)}</td><td class="remarks-cell" data-label="Remarks">${esc(r.recording_remarks)}</td><td><button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> <button class="small-btn" onclick="showRescheduleHistory('${r.id}')">History</button> <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button></td></tr>`).join("");
+ $("matchTable").innerHTML=rows.map(r=>`<tr><td><input type="checkbox" class="rowchk" data-id="${r.id}"${sel.has(r.id)?" checked":""}></td><td data-label="Date">${esc(fmtDate(r.match_date))}</td><td data-label="Time">${esc(fmtTime(r.match_time))}</td><td data-label="Series">${esc(r.series)}</td><td data-label="Match">${esc(r.match)}${clashSet.has(r.id)?' <span title="Overlaps another match" style="color:var(--leather)">⚠</span>':""}${overdueSet.has(r.id)?' <span title="Upload overdue">⏰</span>':""}</td><td data-label="ODI/T20">${esc(r.odi_t20)}</td><td data-label="Expected">${esc(r.expected_overs)}</td><td data-label="Recorded">${pill(r.recorded)}</td><td data-label="Uploaded">${pill(r.uploaded)}</td><td data-label="Camera">${camCell(r)}</td><td data-label="Operator">${opCell(r)}</td><td data-label="Live on">${streamCell(r)}</td><td data-label="Status">${statusCell(r)}</td><td data-label="Checklist">${ckCell(r)}</td><td class="remarks-cell" data-label="Remarks">${esc(r.recording_remarks)}</td><td>${can("edit")?`<button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> `:""}<button class="small-btn" onclick="showRescheduleHistory('${r.id}')">History</button>${can("delete")?` <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button>`:""}</td></tr>`).join("");
  updateBulkBar();
 }
 window.editMatch=async id=>{
  const r=allMatches.find(x=>x.id===id);if(!r)return;editingId=id;
- $("format").value=r.format||"Cricket";$("date").value=fmtDate(r.match_date);setTP(timePicker,(r.match_time||"09:00").slice(0,5));$("series").value=r.series||"";$("match").value=r.match||"";$("odiT20").value=r.odi_t20||"";$("expected").value=r.expected_overs||"";$("recorded").value=r.recorded||"Pending";$("uploaded").value=r.uploaded||"Pending";$("remarks").value=r.recording_remarks||"";$("status").value=effStatus(r);$("submitBtn").textContent="Update Match";
+ $("format").value=r.format||"Cricket";$("date").value=fmtDate(r.match_date);setTP(timePicker,(r.match_time||"09:00").slice(0,5));$("series").value=r.series||"";$("match").value=r.match||"";$("odiT20").value=r.odi_t20||"";$("expected").value=r.expected_overs||"";$("recorded").value=r.recorded||"Pending";$("uploaded").value=r.uploaded||"Pending";$("remarks").value=r.recording_remarks||"";$("status").value=effStatus(r);$("camera").value=r.camera||"";$("submitBtn").textContent="Update Match";
  $("matchForm").scrollIntoView({behavior:"smooth"});
 };
 window.deleteMatch=async id=>{if(confirm("Delete this match?")){const {error}=await client.from("matches").delete().eq("id",id);if(error)alert(error.message);else render();}};
-$("clearBtn").addEventListener("click",resetForm);$("search").addEventListener("input",render);$("statusFilter").addEventListener("change",render);
+$("clearBtn").addEventListener("click",resetForm);$("search").addEventListener("input",render);$("statusFilter").addEventListener("change",render);$("cameraFilter").addEventListener("change",render);$("operatorFilter").addEventListener("change",render);$("streamFilter").addEventListener("change",render);
 $("clearAllBtn").addEventListener("click",async()=>{if(!confirm("Delete ALL your matches?"))return;await deleteRows(allMatches.slice(),"All matches deleted");});
 
 /* ---------- Month-wise Excel download buttons ---------- */
@@ -511,7 +570,7 @@ function makeExcelWorkbook(rows,key){
   const base={font:{name:"Arial",sz:12},alignment:{horizontal:"center",vertical:"center"}};
   const left={...base,alignment:{horizontal:"left",vertical:"center"}};
   const remStyle={...left};
-  const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks","Status","Upload Link"];
+  const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks","Status","Upload Link","Camera","Operator","Live Platforms","Stream Link"];
   const aoa=[heads.map(h=>({v:h,t:"s",s:hdrStyle}))];
   for(const r of rows){
     const serial=r.match_date?Math.round((Date.UTC(...r.match_date.split("-").map((x,i)=>i===1?+x-1:+x))-Date.UTC(1899,11,30))/86400000):"";
@@ -522,11 +581,11 @@ function makeExcelWorkbook(rows,key){
       {v:r.odi_t20||"",t:"s",s:left},
       r.expected_overs?{v:r.expected_overs,t:"n",s:left}:{v:"",t:"s",s:left},
       {v:r.recorded||"",t:"s",s:base},{v:r.uploaded||"",t:"s",s:base},
-      {v:r.recording_remarks||"",t:"s",s:remStyle},{v:effStatus(r),t:"s",s:base},{v:r.video_link||"",t:"s",s:left}
+      {v:r.recording_remarks||"",t:"s",s:remStyle},{v:effStatus(r),t:"s",s:base},{v:r.video_link||"",t:"s",s:left},{v:r.camera||"",t:"s",s:base},{v:dispName(r.operator),t:"s",s:base},{v:r.stream_platforms||"",t:"s",s:base},{v:r.stream_link||"",t:"s",s:left}
     ]);
   }
   const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14,16,40].map(w=>({wch:w}));
+  ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14,16,40,14,18,26,40].map(w=>({wch:w}));
   ws["!rows"]=[{hpt:24}];
   const [year,month]=key.split("-").map(Number);
   const sheetName=`${MONTH_NAMES[month-1].slice(0,3)}${year}`;
@@ -570,9 +629,9 @@ function renderCalendar(rows){
 $("calendarRange").addEventListener("change",()=>renderCalendar(allMatches));
 setInterval(()=>{if(!$("app").classList.contains("hidden"))renderCalendar(allMatches);},60000);
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},5000);}
-$("backupBtn").addEventListener("click",()=>{const payload={app:"Cricket Match Manager",version:21,exported_at:new Date().toISOString(),matches:allMatches};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),`Cricket_Match_Backup_${new Date().toISOString().slice(0,10)}.json`);});
+$("backupBtn").addEventListener("click",()=>{const payload={app:"Cricket Match Manager",version:25,exported_at:new Date().toISOString(),matches:allMatches};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),`Cricket_Match_Backup_${new Date().toISOString().slice(0,10)}.json`);});
 $("restoreBtn").addEventListener("click",()=>$("backupInput").click());
-$("backupInput").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const rows=Array.isArray(obj)?obj:obj.matches;if(!Array.isArray(rows))throw new Error("Backup file does not contain a matches array.");const seen=new Set(allMatches.map(matchKey)),out=[];let dup=0,bad=0;for(const x of rows){const d=String(x.match_date||"").slice(0,10),type=String(x.odi_t20||"").toUpperCase(),series=String(x.series||"").trim(),match=String(x.match||"").trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!series||!match||!['ODI','T20'].includes(type)){bad++;continue;}const r={format:x.format||"Cricket",match_date:d,match_time:x.match_time||null,series,match,odi_t20:type,expected_overs:overs(type),recorded:x.recorded==="Done"?"Done":"Pending",uploaded:x.uploaded==="Done"?"Done":"Pending",recording_remarks:x.recording_remarks||""};if(hasStatus!==false)r.status=ALL_ST.includes(x.status)?x.status:(r.uploaded==="Done"?"Uploaded":r.recorded==="Done"?"Recorded":"Scheduled");if(hasExtra!==false){r.video_link=safeLink(x.video_link);r.checklist=(x.checklist&&typeof x.checklist==="object")?x.checklist:{};}const k=matchKey(r);if(seen.has(k)){dup++;continue;}seen.add(k);out.push(r);}if(!out.length){alert(`Nothing to restore. Duplicates: ${dup}; invalid rows: ${bad}.`);return;}if(!confirm(`Restore ${out.length} match(es)? Duplicates skipped: ${dup}; invalid rows skipped: ${bad}.`))return;let saved=0;for(let i=0;i<out.length;i+=100){const {error}=await client.from("matches").insert(out.slice(i,i+100));if(error)throw error;saved+=Math.min(100,out.length-i);}alert(`Restored ${saved} match(es). Duplicates skipped: ${dup}; invalid rows: ${bad}.`);await render();}catch(err){alert("Restore failed: "+(err.message||err));}e.target.value="";});
+$("backupInput").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const rows=Array.isArray(obj)?obj:obj.matches;if(!Array.isArray(rows))throw new Error("Backup file does not contain a matches array.");const seen=new Set(allMatches.map(matchKey)),out=[];let dup=0,bad=0;for(const x of rows){const d=String(x.match_date||"").slice(0,10),type=String(x.odi_t20||"").toUpperCase(),series=String(x.series||"").trim(),match=String(x.match||"").trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!series||!match||!['ODI','T20'].includes(type)){bad++;continue;}const r={format:x.format||"Cricket",match_date:d,match_time:x.match_time||null,series,match,odi_t20:type,expected_overs:overs(type),recorded:x.recorded==="Done"?"Done":"Pending",uploaded:x.uploaded==="Done"?"Done":"Pending",recording_remarks:x.recording_remarks||""};if(hasStatus!==false)r.status=ALL_ST.includes(x.status)?x.status:(r.uploaded==="Done"?"Uploaded":r.recorded==="Done"?"Recorded":"Scheduled");if(hasExtra!==false){r.video_link=safeLink(x.video_link);r.checklist=(x.checklist&&typeof x.checklist==="object")?x.checklist:{};}if(hasCam!==false)r.camera=normCam(x.camera);if(hasV24!==false){r.operator=x.operator||"";r.stream_platforms=normPlats(x.stream_platforms);r.stream_link=safeLink(x.stream_link);}const k=matchKey(r);if(seen.has(k)){dup++;continue;}seen.add(k);out.push(r);}if(!out.length){alert(`Nothing to restore. Duplicates: ${dup}; invalid rows: ${bad}.`);return;}if(!confirm(`Restore ${out.length} match(es)? Duplicates skipped: ${dup}; invalid rows skipped: ${bad}.`))return;let saved=0;for(let i=0;i<out.length;i+=100){const {error}=await client.from("matches").insert(out.slice(i,i+100));if(error)throw error;saved+=Math.min(100,out.length-i);}alert(`Restored ${saved} match(es). Duplicates skipped: ${dup}; invalid rows: ${bad}.`);await render();}catch(err){alert("Restore failed: "+(err.message||err));}e.target.value="";});
 $("rangeExcelBtn").addEventListener("click",()=>{if(typeof XLSX==="undefined"){alert("Excel library did not load. Check internet and refresh.");return;}const from=$("reportFrom").value,to=$("reportTo").value;if(from&&to&&from>to){alert("Report start date must be before end date.");return;}const rows=allMatches.filter(r=>(!from||r.match_date>=from)&&(!to||r.match_date<=to));if(!rows.length){alert("No matches found in the selected date range.");return;}const wb=makeExcelWorkbook(rows,monthKey(rows[0].match_date)||"2026-01");const arr=XLSX.write(wb,{bookType:"xlsx",type:"array"});downloadBlob(new Blob([arr],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),`Cricket_Matches_${from||"start"}_to_${to||"end"}.xlsx`);});
 async function showRescheduleHistory(id){const {data,error}=await client.from("match_reschedule_history").select("*").eq("match_id",id).order("changed_at",{ascending:false});if(error){alert("Run setup_reschedule_history.sql in Supabase first. "+error.message);return;}if(!data.length){alert("No reschedule history for this match.");return;}alert(data.map(x=>`${new Date(x.changed_at).toLocaleString()}\n${fmtDate(x.old_date)} ${fmtTime(x.old_time)} → ${fmtDate(x.new_date)} ${fmtTime(x.new_time)}`).join("\n\n"));}
 window.showRescheduleHistory=showRescheduleHistory;
@@ -627,6 +686,8 @@ $("fileInput").addEventListener("change",async e=>{
     if(stx) Object.assign(nr,deriveFlags(stx));
     if(hasStatus!==false) nr.status=stx||effStatus(nr);
     if(hasExtra!==false) nr.video_link=safeLink(x["upload link"]||x["link"]);
+    if(hasCam!==false) nr.camera=normCam(x["camera"]);
+    if(hasV24!==false){nr.operator=String(x["operator"]||"").trim();nr.stream_platforms=normPlats(x["live platforms"]);nr.stream_link=safeLink(x["stream link"]);}
     out.push(nr);
   });
   let n=0;
@@ -757,6 +818,7 @@ function deriveFlags(st){
 }
 function statusCell(r){
   const cur=effStatus(r);
+  if(!can("status")) return `<span class="pill ${cur==="Uploaded"?"done":"pending"}">${esc(cur)}</span>`;
   return `<select class="st-select st-${cur}" onchange="setStatus('${r.id}',this.value)">${ALL_ST.map(x=>`<option${x===cur?" selected":""}>${x}</option>`).join("")}</select>`;
 }
 window.setStatus=async(id,val)=>{
@@ -790,14 +852,14 @@ function attentionItems(rows){
     const mins=(startOf(r)-now)/60000;
     if(mins>=0&&mins<=1440&&(st==="Scheduled"||st==="Recording")) out.push({r,kind:"soon",txt:`Starts in ${human(mins)}`,mins});
     else if(mins<0&&st==="Scheduled") out.push({r,kind:"late",txt:`Match time passed ${human(-mins)} ago - still Scheduled`,mins});
-    else if(mins<-1440&&(st==="Recorded"||st==="Editing"||st==="Recording")) out.push({r,kind:"late",txt:`${st} - upload pending for ${Math.floor(-mins/1440)} day(s)`,mins});
+    else if(false) out.push({r,kind:"late",txt:`${st} - upload pending for ${Math.floor(-mins/1440)} day(s)`,mins});
   }
   return out.sort((a,b)=>(a.kind==="soon"?0:1)-(b.kind==="soon"?0:1)||Math.abs(a.mins)-Math.abs(b.mins));
 }
 function renderAttention(rows){
-  const items=attentionItems(rows).concat(computeClashes(rows).slice(0,10).map(([a,b])=>({r:a,kind:"late",txt:`⚠ Overlaps with ${b.match} (${fmtTime(b.match_time)})`,mins:(startOf(a)-new Date())/60000})));
+  const items=attentionItems(rows).concat(overdueItems(rows)).concat(computeClashes(rows).slice(0,10).map(([a,b])=>({r:a,kind:"late",txt:(a.camera&&a.camera===b.camera?`⚠ SAME CAMERA (${a.camera}) as ${b.match}`:`⚠ Overlaps with ${b.match} (${fmtTime(b.match_time)}) - give a different camera`),mins:(startOf(a)-new Date())/60000})));
   $("attentionEmpty").classList.toggle("hidden",items.length>0);
-  $("attentionList").innerHTML=items.slice(0,20).map(({r,kind,txt})=>`<div class="att-item ${kind}"><div><strong>${esc(r.match)}</strong><small>${esc(r.series)} | ${esc(fmtDate(r.match_date))} ${esc(fmtTime(r.match_time))} | ${esc(txt)}</small></div><div>${statusCell(r)} <button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button></div></div>`).join("")+(items.length>20?`<p class="rem-note">+${items.length-20} more</p>`:"");
+  $("attentionList").innerHTML=items.slice(0,20).map(({r,kind,txt})=>`<div class="att-item ${kind}"><div><strong>${esc(r.match)}</strong><small>${esc(r.camera?r.camera+" | ":"")}${esc(r.series)} | ${esc(fmtDate(r.match_date))} ${esc(fmtTime(r.match_time))} | ${esc(txt)}</small></div><div>${statusCell(r)} ${can("edit")?`<button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button>`:""}</div></div>`).join("")+(items.length>20?`<p class="rem-note">+${items.length-20} more</p>`:"");
   document.title=(items.length?`(${items.length}) `:"")+"Cricket Match Manager - Online";
 }
 const REM_KEY="cmm_rem_v20",FIRED_KEY="cmm_fired_v20";
@@ -832,14 +894,15 @@ async function checkReminders(){
   const c=remCfg(); if(!c.on||$("app").classList.contains("hidden")||!allMatches.length) return;
   const f=fired(),now=new Date(); let changed=false;
   for(const r of allMatches){
+    if(mineOnly()&&!isMine(r)) continue;
     const st=effStatus(r); if(INACTIVE.includes(st)||st==="Uploaded"||st==="Recorded"||st==="Editing") continue;
     const mins=(startOf(r)-now)/60000, base=`${r.id}|${r.match_date}|${String(r.match_time||"").slice(0,5)}`;
-    if(mins>0&&mins<=c.lead&&!f[base+"|lead"]){f[base+"|lead"]=Date.now();changed=true;await notify(`Match in ${human(mins)}`,`${r.match} (${r.series}) at ${fmtTime(r.match_time)}`,base+"|lead");}
-    if(mins<=0&&mins>-10&&!f[base+"|start"]){f[base+"|start"]=Date.now();changed=true;await notify("Match starting now",`${r.match} (${r.series}) - start recording`,base+"|start");}
+    if(mins>0&&mins<=c.lead&&!f[base+"|lead"]){f[base+"|lead"]=Date.now();changed=true;await notify(`Match in ${human(mins)}`,`${r.match} (${r.series}) at ${fmtTime(r.match_time)}${r.camera?" - "+r.camera:""}`,base+"|lead");}
+    if(mins<=0&&mins>-10&&!f[base+"|start"]){f[base+"|start"]=Date.now();changed=true;await notify("Match starting now",`${r.match} (${r.series}) - start recording${r.camera?" on "+r.camera:""}`,base+"|start");}
   }
   if(c.overdue){
     const day="od-"+new Date().toISOString().slice(0,10);
-    if(!f[day]){const late=attentionItems(allMatches).filter(x=>x.kind==="late");
+    if(!f[day]){const late=attentionItems(allMatches).concat(overdueItems(allMatches)).filter(x=>x.kind==="late"&&(!mineOnly()||isMine(x.r)));
       if(late.length){f[day]=Date.now();changed=true;await notify(`${late.length} match(es) need attention`,late.slice(0,3).map(x=>x.r.match).join(", "),day);}}
   }
   if(changed)saveFired(f);
@@ -859,11 +922,11 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventLis
 let hasExtra=null; const sel=new Set(); let undoAct=null,undoTimer=null,ckId=null,clashSet=new Set();
 const durH=r=>r.odi_t20==="ODI"?8:3.5;   /* estimated match length in hours */
 const endOf=r=>new Date(startOf(r).getTime()+durH(r)*36e5);
-function clashesWith(row,exceptId){return allMatches.filter(o=>o.id!==exceptId&&!INACTIVE.includes(effStatus(o))&&startOf(o)<endOf(row)&&startOf(row)<endOf(o));}
+function clashesWith(row,exceptId){return allMatches.filter(o=>o.id!==exceptId&&!INACTIVE.includes(effStatus(o))&&startOf(o)<endOf(row)&&startOf(row)<endOf(o)&&camOk(row,o));}
 function computeClashes(rows){
   const now=Date.now(),pairs=[]; clashSet=new Set();
   const act=rows.filter(r=>!INACTIVE.includes(effStatus(r))&&endOf(r)>now).sort((a,b)=>startOf(a)-startOf(b));
-  for(let i=0;i<act.length;i++)for(let j=i+1;j<act.length&&startOf(act[j])<endOf(act[i]);j++){clashSet.add(act[i].id);clashSet.add(act[j].id);pairs.push([act[i],act[j]]);}
+  for(let i=0;i<act.length;i++)for(let j=i+1;j<act.length&&startOf(act[j])<endOf(act[i]);j++){if(!camOk(act[i],act[j]))continue;clashSet.add(act[i].id);clashSet.add(act[j].id);pairs.push([act[i],act[j]]);}
   return pairs;
 }
 
@@ -871,17 +934,17 @@ function computeClashes(rows){
 function setUndo(msg,fn){clearTimeout(undoTimer);undoAct=fn;$("toastMsg").textContent=msg;$("toastUndo").classList.toggle("hidden",!fn);$("toast").classList.remove("hidden");undoTimer=setTimeout(hideToast,12000);}
 function hideToast(){$("toast").classList.add("hidden");undoAct=null;}
 $("toastUndo").addEventListener("click",async()=>{const f=undoAct;hideToast();if(f){try{await f();}catch(e){alert("Undo failed: "+(e.message||e));}await render();}});
-const cleanRow=r=>{const {seq,...x}=r;return x;};
+const cleanRow=r=>{const {seq,user_id,...x}=r;return x;};
 async function deleteRows(rows,label){
   if(!rows.length)return;
   const ids=rows.map(r=>r.id); let hist=[];
   try{for(let i=0;i<ids.length;i+=100){const h=await client.from("match_reschedule_history").select("*").in("match_id",ids.slice(i,i+100));if(!h.error&&h.data)hist=hist.concat(h.data);}}catch(e){}
-  for(let i=0;i<ids.length;i+=100){const {error}=await client.from("matches").delete().in("id",ids.slice(i,i+100));if(error){alert(error.message);await render();return;}}
+  for(let i=0;i<ids.length;i+=100){const part=ids.slice(i,i+100);const {data:dd,error}=await client.from("matches").delete().in("id",part).select("id");if(error||!dd||dd.length<part.length){alert(error?error.message:"Some matches were not deleted - you may not have permission.");await render();return;}}
   ids.forEach(i=>sel.delete(i));
   const snap=rows.map(cleanRow);
   setUndo(label,async()=>{
     for(let i=0;i<snap.length;i+=100){const {error}=await client.from("matches").insert(snap.slice(i,i+100));if(error)throw error;}
-    for(let i=0;i<hist.length;i+=100){await client.from("match_reschedule_history").insert(hist.slice(i,i+100));}
+    for(let i=0;i<hist.length;i+=100){await client.from("match_reschedule_history").insert(hist.slice(i,i+100).map(({user_id,...h})=>h));}
   });
   await render();
 }
@@ -890,8 +953,8 @@ window.setStatus=async(id,val)=>{
   if(hasStatus===false&&INACTIVE.includes(val)){alert("Run add_status_column.sql in Supabase first to use "+val+".");render();return;}
   const r=allMatches.find(x=>x.id===id); const old={recorded:r?r.recorded:"Pending",uploaded:r?r.uploaded:"Pending"}; if(hasStatus!==false&&r)old.status=r.status||"Scheduled";
   const upd=deriveFlags(val); if(hasStatus!==false)upd.status=val;
-  const {error}=await client.from("matches").update(upd).eq("id",id);
-  if(error){alert(error.message);render();return;}
+  const {data:ud,error}=await client.from("matches").update(upd).eq("id",id).select("id");
+  if(error||!(ud&&ud.length)){alert(error?error.message:"Not allowed: you do not have permission for this change.");render();return;}
   setUndo("Status set to "+val,async()=>{await client.from("matches").update(old).eq("id",id);}); render();
 };
 
@@ -911,7 +974,7 @@ $("bulkStatusBtn").addEventListener("click",async()=>{
   const old=rows.map(r=>({id:r.id,recorded:r.recorded,uploaded:r.uploaded,status:r.status}));
   const upd=deriveFlags(val); if(hasStatus!==false)upd.status=val;
   const ids=rows.map(r=>r.id);
-  for(let i=0;i<ids.length;i+=100){const {error}=await client.from("matches").update(upd).in("id",ids.slice(i,i+100));if(error){alert(error.message);await render();return;}}
+  for(let i=0;i<ids.length;i+=100){const part=ids.slice(i,i+100);const {data:ud,error}=await client.from("matches").update(upd).in("id",part).select("id");if(error||!ud||ud.length<part.length){alert(error?error.message:"Some matches were not changed - you may not have permission.");await render();return;}}
   setUndo(`${rows.length} match(es) set to ${val}`,async()=>{await Promise.all(old.map(o=>{const u={recorded:o.recorded,uploaded:o.uploaded};if(hasStatus!==false&&o.status)u.status=o.status;return client.from("matches").update(u).eq("id",o.id);}));});
   await render();
 });
@@ -938,19 +1001,299 @@ const ckOf=r=>(r.checklist&&typeof r.checklist==="object")?r.checklist:{};
 const ckCount=r=>CK.filter(k=>ckOf(r)[k]).length;
 const safeLink=u=>/^https?:\/\//i.test(String(u||"").trim())?String(u).trim():"";
 function ckCell(r){const n=ckCount(r),l=safeLink(r.video_link);return `<button class="small-btn" onclick="openCk('${r.id}')">${n}/5</button>`+(l?` <a href="${esc(l)}" target="_blank" rel="noopener">&#9654; link</a>`:"");}
-window.openCk=id=>{const r=allMatches.find(x=>x.id===id);if(!r)return;ckId=id;$("ckTitle").textContent=r.match;CK.forEach(k=>$("ck_"+k).checked=!!ckOf(r)[k]);$("ckLink").value=r.video_link||"";$("ckModal").classList.remove("hidden");};
+window.openCk=id=>{const r=allMatches.find(x=>x.id===id);if(!r)return;ckId=id;$("ckTitle").textContent=r.match;CK.forEach(k=>$("ck_"+k).checked=!!ckOf(r)[k]);$("ckLink").value=r.video_link||"";{const pl=(r.stream_platforms||"").split(", ");document.querySelectorAll(".str-p").forEach(c=>c.checked=pl.includes(c.value));$("strLink").value=r.stream_link||"";$("genOut").classList.add("hidden");}$("ckModal").classList.remove("hidden");};
 $("ckCancel").addEventListener("click",()=>$("ckModal").classList.add("hidden"));
 $("ckModal").addEventListener("click",e=>{if(e.target===$("ckModal"))$("ckModal").classList.add("hidden");});
 $("ckSave").addEventListener("click",async()=>{
+  if(!can("status")){alert("You do not have permission to change the checklist.");return;}
   if(hasExtra===false){alert("Run add_v21_columns.sql in Supabase first.");return;}
   const link=$("ckLink").value.trim(); if(link&&!safeLink(link)){alert("Link must start with http:// or https://");return;}
   const r=allMatches.find(x=>x.id===ckId); if(!r)return;
-  const old={checklist:ckOf(r),video_link:r.video_link||""}, nw={checklist:Object.fromEntries(CK.map(k=>[k,$("ck_"+k).checked])),video_link:link};
+  const old={checklist:ckOf(r),video_link:r.video_link||"",...(hasV24!==false?{stream_platforms:r.stream_platforms||"",stream_link:r.stream_link||""}:{})}, nw={checklist:Object.fromEntries(CK.map(k=>[k,$("ck_"+k).checked])),video_link:link,...(hasV24!==false?{stream_platforms:[...document.querySelectorAll(".str-p")].filter(c=>c.checked).map(c=>c.value).join(", "),stream_link:safeLink($("strLink").value)}:{})};
   const {error}=await client.from("matches").update(nw).eq("id",ckId); if(error){alert(error.message);return;}
   $("ckModal").classList.add("hidden"); setUndo("Checklist saved",async()=>{await client.from("matches").update(old).eq("id",ckId);}); await render();
 });
 
+/* ================= v22.1: username login ================= */
+const USERNAME_DOMAIN="cricketmatch.app";   /* usernames are stored as username@this-domain; change only before creating users */
+function toLoginEmail(v){
+  v=String(v||"").trim().toLowerCase();
+  if(v.includes("@")) return (/^[a-z0-9][a-z0-9._%+-]*@[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(v)&&!v.split("@")[0].includes("..")&&!v.split("@")[0].endsWith("."))?v:null;
+  return /^[a-z0-9]{3,20}$/.test(v)?v+"@"+USERNAME_DOMAIN:null;
+}
+const dispName=e=>{e=String(e||"");return e.toLowerCase().endsWith("@"+USERNAME_DOMAIN)?e.slice(0,e.lastIndexOf("@")):e;};
+
+/* ================= v22: admin / user roles ================= */
+let ME=null, USERS=[];
+const PERMS=[["view","View matches"],["add","Add / import"],["edit","Edit all fields"],["status","Status & checklist"],["delete","Delete"],["export","Export / backup"]];
+const PRESETS={Viewer:{view:1,export:1},Recorder:{view:1,status:1,export:1},Editor:{view:1,add:1,edit:1,status:1,export:1},Full:{view:1,add:1,edit:1,status:1,delete:1,export:1},None:{}};
+const isAdmin=()=>!!ME&&(ME.legacy||ME.role==="admin");
+const can=p=>!ME||ME.legacy||ME.role==="admin"||!!ME["can_"+p];
+async function loadProfile(session){
+  const {data,error}=await client.from("profiles").select("*").eq("user_id",session.user.id).maybeSingle();
+  if(error){ME={legacy:true,role:"admin",approved:true};$("rolesBar").classList.remove("hidden");return;}
+  $("rolesBar").classList.add("hidden");
+  ME=data||{role:"user",approved:false,email:session.user.email};
+}
+async function setAuthUI(session){
+  if(!session){
+    ME=null;try{localStorage.removeItem(CACHE_KEY);}catch(e){}
+    $("pendingScreen").classList.add("hidden"); setAuthUI_base(null); return;
+  }
+  await loadProfile(session);
+  if(!ME.legacy&&ME.role!=="admin"&&!ME.approved){
+    $("loginScreen").classList.add("hidden");$("app").classList.add("hidden");
+    $("pendingScreen").classList.remove("hidden");$("pendEmail").textContent=dispName(session.user.email);return;
+  }
+  $("pendingScreen").classList.add("hidden");
+  applyPerms(); setAuthUI_base(session); $("userEmail").textContent=dispName(session.user.email);
+  if(isAdmin()&&!ME.legacy) loadUsers();
+}
+$("pendRefresh").addEventListener("click",async()=>{const {data}=await client.auth.getSession();setAuthUI(data.session);});
+$("pendLogout").addEventListener("click",()=>client.auth.signOut());
+function applyPerms(){
+  const show=(id,on)=>{const e=$(id);if(e)e.classList.toggle("hidden",!on);};
+  show("secAuto",can("add"));show("secBulk",can("add"));show("secEntry",can("add")||can("edit"));
+  show("importBtn",can("add"));show("restoreBtn",can("add"));show("backupBtn",can("export"));show("clearAllBtn",isAdmin());
+  show("rangeExcelBtn",can("export"));show("reportBox",can("export"));show("monthDownloadButtons",can("export"));
+  show("bulkStatus",can("status"));show("bulkStatusBtn",can("status"));show("bulkShift",can("edit"));show("bulkShiftBtn",can("edit"));show("bulkDelBtn",can("delete"));
+  show("secAdmin",isAdmin()&&!ME.legacy);
+  const rb=$("roleBadge");rb.classList.toggle("hidden",!!ME.legacy);rb.textContent=ME.role==="admin"?"Admin":"User";
+}
+
+/* ----- admin panel ----- */
+async function loadUsers(){
+  const {data,error}=await client.from("profiles").select("*").order("created_at",{ascending:true});
+  if(error){$("usersList").textContent=error.message;return;}
+  USERS=data||[]; renderUsers();
+}
+function renderUsers(){
+  const pend=USERS.filter(u=>!u.approved&&u.role!=="admin").length;
+  $("pendBadge").textContent=pend+" pending";$("pendBadge").classList.toggle("hidden",!pend);
+  $("pendBar").textContent=pend?`${pend} user(s) waiting for approval - tap to review`:"";$("pendBar").classList.toggle("hidden",!pend);
+  $("usersList").innerHTML=USERS.map(u=>{
+    const me=u.user_id===(ME&&ME.user_id), adm=u.role==="admin";
+    const state=adm?"Admin":u.approved?"Active":"Pending / blocked";
+    return `<div class="ucard${!u.approved&&!adm?" pend":""}" data-id="${esc(u.user_id)}">
+     <div class="uhead"><strong>${esc(dispName(u.email)||u.user_id)}</strong><span class="pill ${u.approved||adm?"done":"pending"}">${state}</span>${me?"<em>(you)</em>":""}</div>
+     <div class="ugrid">
+      <label>Role<select class="u-role"${me?" disabled":""}><option value="user"${!adm?" selected":""}>User</option><option value="admin"${adm?" selected":""}>Admin</option></select></label>
+      <label class="inline-check"><input type="checkbox" class="u-appr"${u.approved||adm?" checked":""}${me?" disabled":""}> Approved</label>
+      <label>Preset<select class="u-preset"><option value="">Choose preset...</option>${Object.keys(PRESETS).map(k=>`<option>${k}</option>`).join("")}</select></label>
+     </div>
+     <div class="uperms">${PERMS.map(([k,l])=>`<label><input type="checkbox" class="u-p" data-p="${k}"${(adm||u["can_"+k])?" checked":""}${adm?" disabled":""}> ${l}</label>`).join("")}</div>
+     <button class="primary u-save">Save</button></div>`;
+  }).join("")||'<p class="empty">No users yet.</p>';
+}
+$("usersRefresh").addEventListener("click",loadUsers);
+$("pendBar").addEventListener("click",()=>$("secAdmin").scrollIntoView({behavior:"smooth"}));
+$("usersList").addEventListener("change",e=>{
+  const c=e.target,card=c.closest(".ucard"); if(!card)return;
+  if(c.classList.contains("u-preset")&&c.value){const pr=PRESETS[c.value];card.querySelectorAll(".u-p").forEach(x=>x.checked=!!pr[x.dataset.p]);c.value="";}
+  if(c.classList.contains("u-appr")&&c.checked&&![...card.querySelectorAll(".u-p")].some(x=>x.checked)){card.querySelectorAll(".u-p").forEach(x=>x.checked=!!PRESETS.Recorder[x.dataset.p]);}
+  if(c.classList.contains("u-role")){const a=c.value==="admin";card.querySelectorAll(".u-p").forEach(x=>{x.disabled=a;if(a)x.checked=true;});if(a)card.querySelector(".u-appr").checked=true;}
+});
+$("usersList").addEventListener("click",async e=>{
+  const b=e.target.closest(".u-save"); if(!b)return;
+  const card=b.closest(".ucard"),id=card.dataset.id;
+  const upd={role:card.querySelector(".u-role").value,approved:card.querySelector(".u-appr").checked};
+  PERMS.forEach(([k])=>{upd["can_"+k]=card.querySelector(`.u-p[data-p="${k}"]`).checked;});
+  if(upd.role==="admin"){upd.approved=true;PERMS.forEach(([k])=>upd["can_"+k]=true);}
+  b.disabled=true;
+  const {data,error}=await client.from("profiles").update(upd).eq("user_id",id).select("user_id");
+  b.disabled=false;
+  if(error||!(data&&data.length)){alert(error?error.message:"Could not save - are you an admin?");return;}
+  setUndo("Permissions saved",null); await loadUsers();
+});
+
+/* ================= v23: camera per match ================= */
+const CAM_COUNT=8;   /* number of cameras you own: change this number if needed */
+const CAMS=Array.from({length:CAM_COUNT},(_,i)=>"Camera "+(i+1));
+let hasCam=null;
+const camOk=(a,b)=>!a.camera||!b.camera||a.camera===b.camera;   /* two different assigned cameras can record at the same time */
+const normCam=v=>{v=String(v||"").trim();if(!v)return"";const m=v.match(/(\d+)/);const n=m?parseInt(m[1],10):0;return(n>=1&&n<=CAM_COUNT)?"Camera "+n:"";};
+const camOpts=(cur,first)=>`<option value="">${first}</option>`+CAMS.map(c=>`<option${c===cur?" selected":""}>${c}</option>`).join("");
+function camCell(r){
+  if(!can("status")) return r.camera?`<span class="pill done">${esc(r.camera)}</span>`:"-";
+  return `<select class="st-select" onchange="setCamera('${r.id}',this.value)">${camOpts(r.camera||"","- none -")}</select>`;
+}
+$("camera").innerHTML=camOpts("","- not set -");
+$("bulkCamera").innerHTML=camOpts("","Choose camera...").replace('<option value="">Choose camera...</option>','<option value="" disabled selected>Choose camera...</option><option value="__clear">- clear camera -</option>');
+$("cameraFilter").innerHTML='<option value="">All cameras</option><option value="__none">No camera set</option>'+CAMS.map(c=>`<option>${c}</option>`).join("");
+window.setCamera=async(id,val)=>{
+  if(hasCam===false){alert("Run add_camera_column.sql in Supabase first.");render();return;}
+  const r=allMatches.find(x=>x.id===id),old=r?(r.camera||""):"";
+  const {data,error}=await client.from("matches").update({camera:val}).eq("id",id).select("id");
+  if(error||!(data&&data.length)){alert(error?error.message:"Not allowed: you do not have permission for this change.");render();return;}
+  setUndo(val?`${val} set`:"Camera cleared",async()=>{await client.from("matches").update({camera:old}).eq("id",id);});render();
+};
+$("bulkCameraBtn").addEventListener("click",async()=>{
+  const rows=selRows(),v=$("bulkCamera").value; if(!rows.length||!v)return;
+  if(hasCam===false){alert("Run add_camera_column.sql in Supabase first.");return;}
+  const val=v==="__clear"?"":v,ids=rows.map(r=>r.id),old=rows.map(r=>({id:r.id,camera:r.camera||""}));
+  for(let i=0;i<ids.length;i+=100){const part=ids.slice(i,i+100);const {data,error}=await client.from("matches").update({camera:val}).in("id",part).select("id");if(error||!data||data.length<part.length){alert(error?error.message:"Some matches were not changed - you may not have permission.");await render();return;}}
+  setUndo(`${rows.length} match(es): ${val||"camera cleared"}`,async()=>{await Promise.all(old.map(o=>client.from("matches").update({camera:o.camera}).eq("id",o.id)));});
+  await render();
+});
+const _applyPerms=applyPerms;
+applyPerms=function(){_applyPerms();const on=can("status");["bulkCamera","bulkCameraBtn"].forEach(i=>$(i).classList.toggle("hidden",!on));};
+
+/* ================= v24: operators, live streams, planner, analytics, admin tools ================= */
+let hasV24=null,TEAM=[],planProp=[],overdueSet=new Set();
+const PLATS=["YouTube","Facebook","JioHotstar","Sony LIV","FanCode","Star Sports","Willow","Other"];
+const normPlats=v=>[...new Set(String(v||"").split(/[,;|]/).map(x=>PLATS.find(p=>p.toLowerCase()===x.trim().toLowerCase())).filter(Boolean))].join(", ");
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+const mineOnly=()=>localStorage.getItem("cmm_mine")==="1";
+const dueH=()=>+(localStorage.getItem("cmm_due")||24);
+const myEmail=()=>(ME&&ME.email)||"";
+const isMine=r=>!!r.operator&&r.operator===myEmail();
+$("strBox").innerHTML=PLATS.map(p=>`<label><input type="checkbox" class="str-p" value="${p}">${p}</label>`).join("");
+$("streamFilter").innerHTML='<option value="">All platforms</option>'+PLATS.map(p=>`<option>${p}</option>`).join("");
+$("remMine").checked=mineOnly();$("remMine").addEventListener("change",()=>localStorage.setItem("cmm_mine",$("remMine").checked?"1":"0"));
+$("dueHrs").value=String(dueH());$("dueHrs").addEventListener("change",()=>{localStorage.setItem("cmm_due",$("dueHrs").value);renderAttention(allMatches);render();});
+
+/* live stream cell + title generator */
+function streamCell(r){
+  const pl=r.stream_platforms||"",l=safeLink(r.stream_link);
+  const b=can("status")?`<button class="small-btn" onclick="openCk('${r.id}')">${pl?esc(pl):"+ add"}</button>`:esc(pl||"-");
+  return b+(l?` <a href="${esc(l)}" target="_blank" rel="noopener">&#9654;</a>`:"");
+}
+$("genTitleBtn").addEventListener("click",()=>{
+  const r=allMatches.find(x=>x.id===ckId);if(!r)return;
+  const pl=[...document.querySelectorAll(".str-p")].filter(c=>c.checked).map(c=>c.value).join(", ");
+  const t=`${r.match} | ${r.series} | ${r.odi_t20||"Cricket"} Live | ${fmtDate(r.match_date)}`;
+  const d=`${r.match}\n${r.series} - ${r.odi_t20||"Cricket"} match on ${fmtDate(r.match_date)} at ${fmtTime(r.match_time)}.${pl?`\nLive on: ${pl}`:""}\n\n#cricket #livecricket #${String(r.series||"").replace(/[^a-z0-9]/gi,"")}`;
+  $("genOut").value=t+"\n\n"+d;$("genOut").classList.remove("hidden");$("genOut").select();try{navigator.clipboard.writeText(t+"\n\n"+d);}catch(e){}
+});
+
+/* operator assignment */
+function opCell(r){
+  if(!can("status")||!TEAM.length) return esc(dispName(r.operator)||"-");
+  const list=(!r.operator||TEAM.includes(r.operator))?TEAM:[r.operator,...TEAM];
+  return `<select class="st-select" onchange="setOperator('${r.id}',this.value)"><option value="">- none -</option>${list.map(e=>`<option value="${esc(e)}"${e===r.operator?" selected":""}>${esc(dispName(e))}</option>`).join("")}</select>`;
+}
+window.setOperator=async(id,val)=>{
+  if(hasV24===false){alert("Run add_v24_core.sql in Supabase first.");render();return;}
+  const r=allMatches.find(x=>x.id===id),old=r?(r.operator||""):"";
+  const {data,error}=await client.from("matches").update({operator:val}).eq("id",id).select("id");
+  if(error||!(data&&data.length)){alert(error?error.message:"Not allowed: you do not have permission for this change.");render();return;}
+  setUndo(val?`Assigned to ${dispName(val)}`:"Operator cleared",async()=>{await client.from("matches").update({operator:old}).eq("id",id);});render();
+};
+function fillOpFilter(){const cur=$("operatorFilter").value;$("operatorFilter").innerHTML='<option value="">All operators</option><option value="__me">My matches</option><option value="__none">Unassigned</option>'+TEAM.map(e=>`<option value="${esc(e)}">${esc(dispName(e))}</option>`).join("");$("operatorFilter").value=cur;}
+async function loadTeam(){const {data,error}=await client.rpc("team_list");TEAM=error?[]:(data||[]).map(x=>x.email);fillOpFilter();if(TEAM.length)render();}
+fillOpFilter();
+
+/* upload deadline tracker */
+function overdueItems(rows){
+  overdueSet=new Set();const now=Date.now(),out=[];
+  for(const r of rows){const st=effStatus(r);if(INACTIVE.includes(st)||st==="Uploaded"||st==="Scheduled")continue;
+    const late=(now-endOf(r).getTime())/36e5-dueH();
+    if(late>0){overdueSet.add(r.id);out.push({r,kind:"late",txt:`Upload overdue by ${human(late*60)} (target ${dueH()}h after match)`,mins:-late*60});}}
+  return out;
+}
+
+/* camera planner */
+const dayRows=()=>{const d=$("planDate").value||todayISO();return allMatches.filter(r=>String(r.match_date)===d&&!INACTIVE.includes(effStatus(r))).sort((a,b)=>startOf(a)-startOf(b));};
+function renderPlan(){
+  if(!$("planDate").value)$("planDate").value=todayISO();
+  const day=$("planDate").value,rows=dayRows(),t0=new Date(day+"T00:00:00").getTime();
+  const lane=(lab,list)=>`<div class="tl-row"><div class="tl-lab">${esc(lab)}</div><div class="tl-lane">${list.map(r=>{const l=Math.max(0,(startOf(r)-t0)/864e5*100),w=Math.min(100-l,durH(r)/24*100);return `<div class="tl-bar s-${effStatus(r)}" style="left:${l}%;width:${w}%" title="${esc(r.match+" - "+fmtTime(r.match_time))}">${esc(fmtTime(r.match_time)+" "+r.match)}</div>`;}).join("")}</div></div>`;
+  const hrs=`<div class="tl-row"><div class="tl-lab"></div><div style="flex:1;display:flex;font-size:11px;color:var(--muted)">${[0,3,6,9,12,15,18,21].map(h=>`<span style="width:12.5%">${h}:00</span>`).join("")}</div></div>`;
+  $("planBox").innerHTML=hrs+lane("Not assigned",rows.filter(r=>!r.camera))+CAMS.map(c=>lane(c,rows.filter(r=>r.camera===c))).join("");
+}
+const planShift=n=>{$("planDate").value=addDays($("planDate").value||todayISO(),n);planProp=[];$("planOut").innerHTML="";renderPlan();};
+$("planPrev").addEventListener("click",()=>planShift(-1));$("planNext").addEventListener("click",()=>planShift(1));
+$("planDate").addEventListener("change",()=>{planProp=[];$("planOut").innerHTML="";renderPlan();});
+$("planSuggest").addEventListener("click",()=>{
+  const rows=dayRows(),busy={};CAMS.forEach(c=>busy[c]=rows.filter(r=>r.camera===c));planProp=[];const none=[];
+  for(const r of rows.filter(r=>!r.camera)){const c=CAMS.find(c=>!busy[c].some(o=>startOf(o)<endOf(r)&&startOf(r)<endOf(o)));if(c){busy[c].push(r);planProp.push([r,c]);}else none.push(r);}
+  $("planOut").innerHTML=(planProp.length||none.length)?`<h3 style="margin:12px 0 6px">Suggestion</h3>`+planProp.map(([r,c])=>`<div class="att-item"><div><strong>${esc(r.match)}</strong><small>${esc(fmtTime(r.match_time))}</small></div><b>${c}</b></div>`).join("")+none.map(r=>`<div class="att-item late"><div><strong>${esc(r.match)}</strong><small>No free camera - all ${CAM_COUNT} are busy</small></div></div>`).join("")+((planProp.length&&can("status"))?`<button id="planApply" class="primary">Apply suggestion</button>`:""):'<p class="empty">Every match on this day already has a camera.</p>';
+});
+$("planOut").addEventListener("click",async e=>{
+  if(e.target.id!=="planApply")return; if(hasCam===false){alert("Run add_camera_column.sql in Supabase first.");return;}
+  const g={};planProp.forEach(([r,c])=>(g[c]=g[c]||[]).push(r.id));
+  for(const [c,ids] of Object.entries(g)){const {data,error}=await client.from("matches").update({camera:c}).in("id",ids).select("id");if(error||!data||data.length<ids.length){alert(error?error.message:"Some matches were not changed - you may not have permission.");await render();return;}}
+  const prop=planProp.slice();planProp=[];$("planOut").innerHTML="";
+  setUndo(`${prop.length} camera(s) assigned`,async()=>{for(const [r] of prop)await client.from("matches").update({camera:""}).eq("id",r.id);});await render();
+});
+
+/* analytics */
+function bars(title,pairs){const max=Math.max(1,...pairs.map(p=>p[1]));return `<div class="chart"><h3>${esc(title)}</h3>${pairs.map(([k,v])=>`<div class="crow"><span>${esc(k)}</span><div class="cbar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join("")||'<p class="empty">No data</p>'}</div>`;}
+function renderStats(rows){
+  const act=rows.filter(r=>!INACTIVE.includes(effStatus(r)));
+  const cnt=(arr,f)=>{const m={};arr.forEach(r=>{const k=f(r);if(k)m[k]=(m[k]||0)+1;});return Object.entries(m);};
+  const months=[],d=new Date();for(let i=5;i>=0;i--){const x=new Date(d.getFullYear(),d.getMonth()-i,1);months.push(x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0"));}
+  const pm=months.map(m=>[m.slice(5)+"/"+m.slice(2,4),act.filter(r=>String(r.match_date).startsWith(m)).length]);
+  const up=act.filter(r=>effStatus(r)==="Uploaded").length;
+  $("statsBox").innerHTML=bars("Matches per month",pm)+bars("By status",ALL_ST.map(x=>[x,rows.filter(r=>effStatus(r)===x).length]).filter(x=>x[1]))+bars("By camera",cnt(act,r=>r.camera))+bars("By operator",cnt(act,r=>r.operator&&dispName(r.operator)))+bars("By live platform",cnt(act.flatMap(r=>String(r.stream_platforms||"").split(", ").filter(Boolean).map(p=>({p}))),x=>x.p))+`<div class="chart"><h3>Upload completion</h3><p style="font-size:28px;margin:6px 0"><b>${act.length?Math.round(up/act.length*100):0}%</b></p><small>${up} of ${act.length} uploaded</small></div>`;
+}
+
+/* calendar export (.ics) */
+const icsT=d=>d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")+"T"+String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0")+"00";
+const icsE=t=>String(t||"").replace(/[\\;,]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+$("backupBtn").insertAdjacentHTML("afterend",'<button id="icsBtn">Calendar (.ics)</button>');
+$("icsBtn").addEventListener("click",()=>{
+  const from=Date.now()-864e5,rows=allMatches.filter(r=>!INACTIVE.includes(effStatus(r))&&startOf(r)>=from);
+  if(!rows.length){alert("No upcoming matches to export.");return;}
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CricketMatchManager//EN"];
+  rows.forEach(r=>{const desc=[r.camera,r.operator&&"Operator: "+dispName(r.operator),r.stream_platforms&&"Live: "+r.stream_platforms,r.stream_link].filter(Boolean).join("\n");
+    L.push("BEGIN:VEVENT","UID:"+r.id+"@cricketmatchapp","DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z","DTSTART:"+icsT(startOf(r)),"DTEND:"+icsT(endOf(r)),"SUMMARY:"+icsE(r.match+" ("+r.series+")"),"DESCRIPTION:"+icsE(desc),"END:VEVENT");});
+  L.push("END:VCALENDAR");downloadBlob(new Blob([L.join("\r\n")],{type:"text/calendar"}),"Cricket_Matches.ics");
+});
+
+/* admin tools */
+const sv=v=>{if(v&&typeof v==="object")v=JSON.stringify(v);v=String(v??"");return v.length>40?v.slice(0,40)+"...":v;};
+const rpc=async(n,a)=>{const {data,error}=await client.rpc(n,a||{});if(error){alert(error.message);return null;}return data===null?true:data;};
+function renderAdmin2(){
+  $("adm2").innerHTML=`<h3>Storage &amp; health</h3><div id="hlth">Loading...</div>
+  <h3>Activity log</h3><div class="actions" style="margin:0 0 8px"><button data-a="log">Refresh log</button></div><div id="logBox"></div>
+  <h3>Backups (weekly + on demand)</h3><div class="actions" style="margin:0 0 8px"><button data-a="bk" class="primary">Backup now</button><button data-a="bkl">Refresh list</button></div><div id="bkBox"></div>
+  <h3>Telegram daily schedule (India time)</h3><div class="grid"><label>Bot token<input id="tgTok" type="password" placeholder="leave blank to keep saved"></label><label>Chat ID<input id="tgChat"></label><label>Send daily at<input id="tgTime" type="time" value="08:00"></label><label class="inline-check"><input type="checkbox" id="tgOn"> Enabled</label></div><div class="actions"><button data-a="tgs" class="primary">Save</button><button data-a="tgf">Find chat ID automatically</button><button data-a="tgt">Send test now</button></div><p id="tgMsg" class="rem-note"></p>
+  <h3>Pre-match alerts (Telegram / WhatsApp)</h3>
+  <div class="grid"><label>Alert before match<select id="alLead"><option value="15">15 min</option><option value="30">30 min</option><option value="60" selected>1 hour</option><option value="120">2 hours</option></select></label><label class="inline-check" style="align-self:end"><input type="checkbox" id="alTg"> Telegram (uses bot token + chat ID above)</label></div>
+  <div class="grid"><label>WhatsApp number (country code, no +, e.g. 919876543210)<input id="alPh" inputmode="numeric"></label><label>CallMeBot API key<input id="alKey" type="password" placeholder="paste key"></label><label class="inline-check" style="align-self:end"><input type="checkbox" id="alWa"> WhatsApp</label></div>
+  <div class="actions"><button data-a="als" class="primary">Save alerts</button><button data-a="alt">Send test alert</button></div><p id="alMsg" class="rem-note">Checked every 5 minutes (India time). WhatsApp uses the free CallMeBot service (unofficial): see README for the 1-minute setup.</p>
+  <h3>Share links (read-only)</h3><div class="grid"><label>Series (blank = all)<input id="shSeries"></label><label>Label<input id="shLabel"></label><div class="actions" style="margin:0;align-items:end"><button data-a="shc" class="primary">Create link</button></div></div><div id="shBox"></div>`;
+  loadHealth();loadLog();loadBackups();loadTg();loadAlerts();loadShares();
+}
+async function loadHealth(){const {data,error}=await client.rpc("db_health"),b=$("hlth");if(!b)return;if(error){b.textContent=error.message;return;}
+  const mb=data.db_bytes/1048576,pct=Math.min(100,mb/500*100);
+  b.innerHTML=`<div class="cbar" style="height:14px"><i style="width:${pct}%;${pct>80?"background:var(--leather)":""}"></i></div><p class="rem-note">${mb.toFixed(1)} MB of 500 MB used (${pct.toFixed(1)}%) | ${data.matches} matches | ${data.log_rows} log rows | ${data.backups} backups${pct>80?" - WARNING: almost full":""}<br>Free Supabase projects pause after about 7 days without activity.</p>`;}
+async function loadLog(){const {data,error}=await client.from("activity_log").select("*").order("at",{ascending:false}).limit(60),b=$("logBox");if(!b)return;if(error){b.textContent=error.message;return;}
+  b.innerHTML=(data||[]).map(l=>{const d=l.details||{},ch=(l.action==="updated"||l.action==="permissions");
+    const det=Object.entries(d).filter(([k])=>k!=="updated_at").map(([k,v])=>ch?`${esc(k)}: ${esc(sv(v.old))} &rarr; ${esc(sv(v.new))}`:esc(k+": "+sv(v))).join("; ");
+    return `<div class="att-item" style="border-left-color:var(--turf)"><div><strong>${esc(l.match_name||"")}</strong><small>${esc(new Date(l.at).toLocaleString())} | ${esc(dispName(l.user_email)||"system")} | ${esc(l.action)}</small><small>${det}</small></div></div>`;}).join("")||'<p class="empty">No activity yet.</p>';}
+async function loadBackups(){const {data,error}=await client.from("backups").select("id,created_at,row_count").order("created_at",{ascending:false}).limit(10),b=$("bkBox");if(!b)return;if(error){b.textContent=error.message;return;}
+  b.innerHTML=(data||[]).map(x=>`<div class="att-item" style="border-left-color:var(--turf)"><div>${esc(new Date(x.created_at).toLocaleString())} - ${x.row_count} matches</div><button data-a="bkd" data-id="${x.id}">Download</button></div>`).join("")||'<p class="empty">No backups yet. Tap Backup now.</p>';}
+async function loadTg(){const {data,error}=await client.rpc("get_telegram");if(error||!data||!$("tgChat"))return;$("tgChat").value=data.chat||"";$("tgTime").value=data.time||"08:00";$("tgOn").checked=!!data.enabled;$("tgTok").placeholder=data.token_set?"token saved (leave blank to keep)":"paste bot token";}
+async function loadAlerts(){const {data,error}=await client.rpc("get_alerts");if(error||!data||!$("alLead"))return;$("alLead").value=String(data.lead);$("alTg").checked=!!data.tg;$("alWa").checked=!!data.wa;$("alPh").value=data.wa_phone||"";$("alKey").placeholder=data.wa_key_set?"key saved (leave blank to keep)":"paste key";}
+const shareUrl=t=>location.origin+location.pathname.replace(/[^/]*$/,"")+"share.html?t="+t;
+async function loadShares(){const {data,error}=await client.from("shares").select("*").order("created_at",{ascending:false}),b=$("shBox");if(!b)return;if(error){b.textContent=error.message;return;}
+  b.innerHTML=(data||[]).map(x=>`<div class="att-item" style="border-left-color:var(--turf)"><div><strong>${esc(x.label||x.series||"All series")}</strong><small style="word-break:break-all">${esc(shareUrl(x.token))}</small></div><div><button data-a="shy" data-t="${esc(x.token)}">Copy</button> <button class="danger" data-a="shr" data-t="${esc(x.token)}">Revoke</button></div></div>`).join("")||'<p class="empty">No share links yet.</p>';}
+$("adm2").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
+  if(a==="log")loadLog();
+  else if(a==="bkl")loadBackups();
+  else if(a==="bk"){if(await rpc("make_backup")){await loadBackups();loadHealth();}}
+  else if(a==="bkd"){const {data,error}=await client.from("backups").select("data,created_at").eq("id",b.dataset.id).single();if(error){alert(error.message);return;}
+    downloadBlob(new Blob([JSON.stringify({app:"Cricket Match Manager",version:25,exported_at:data.created_at,matches:data.data},null,2)],{type:"application/json"}),`Cricket_Match_Backup_${String(data.created_at).slice(0,10)}.json`);}
+  else if(a==="tgs"){const r=await rpc("save_telegram",{p_token:$("tgTok").value.trim(),p_chat:$("tgChat").value.trim(),p_time:$("tgTime").value||"08:00",p_enabled:$("tgOn").checked});if(r){$("tgMsg").textContent="Saved.";$("tgTok").value="";loadTg();}}
+  else if(a==="tgt"){const r=await rpc("send_telegram_test");if(r)$("tgMsg").textContent="Result: "+r+" (check your Telegram)";}
+  else if(a==="tgf"){$("tgMsg").textContent="Looking for your Telegram group... wait 6 seconds";const st=await rpc("telegram_detect_start");if(!st){$("tgMsg").textContent="";return;}await new Promise(r=>setTimeout(r,6000));const r=await rpc("telegram_detect_finish");if(r){$("tgMsg").textContent=String(r);loadTg();}}
+  else if(a==="als"){const r=await rpc("save_alerts",{p_lead:+$("alLead").value,p_tg:$("alTg").checked,p_wa_phone:$("alPh").value.trim(),p_wa_key:$("alKey").value.trim(),p_wa_on:$("alWa").checked});if(r){$("alMsg").textContent="Saved. Alerts run every 5 minutes.";$("alKey").value="";loadAlerts();}}
+  else if(a==="alt"){const r=await rpc("send_alert_test");if(r)$("alMsg").textContent="Result: "+r;}
+  else if(a==="shc"){const t=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now()).replace(/-/g,"").slice(0,20);
+    const {error}=await client.from("shares").insert({token:t,series:$("shSeries").value.trim()||null,label:$("shLabel").value.trim()||null});if(error){alert(error.message);return;}loadShares();}
+  else if(a==="shy"){try{await navigator.clipboard.writeText(shareUrl(b.dataset.t));b.textContent="Copied";}catch(x){prompt("Copy this link:",shareUrl(b.dataset.t));}}
+  else if(a==="shr"){if(!confirm("Revoke this link? Anyone using it will lose access."))return;const {error}=await client.from("shares").delete().eq("token",b.dataset.t);if(error)alert(error.message);loadShares();}
+});
+const _ap24=applyPerms;
+applyPerms=function(){_ap24();const adm=isAdmin()&&!ME.legacy;$("secAdmin2").classList.toggle("hidden",!adm);if(adm)renderAdmin2();if(!ME.legacy)loadTeam();};
+
 init();
+
+
+
 
 
 

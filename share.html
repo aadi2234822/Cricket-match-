@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Match Schedule</title><meta name="robots" content="noindex">
+<style>body{font-family:Arial,sans-serif;margin:0;background:#f4f6f0;color:#16231b}header{background:#1d5a38;color:#fff;padding:16px}
+h1{margin:0;font-size:22px}main{max-width:760px;margin:0 auto;padding:12px}h2{font-size:16px;margin:18px 0 6px;color:#123d26}
+.m{background:#fff;border:1px solid #dfe7e1;border-left:4px solid #1d5a38;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.m small{display:block;color:#5d6b62;margin-top:2px}a{color:#1d5a38;font-weight:700}</style></head>
+<body><header><h1 id="t">Match Schedule</h1></header><main id="out">Loading...</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const client=supabase.createClient("https://oevqwgnjhobexmdqiyfg.supabase.co","sb_publishable_9zhVGKfBiAOSVCP-qLs2vA_ZOuIvD9R");
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const tm=t=>{if(!t)return"";let [h,m]=String(t).split(":").map(Number);const ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+String(m).padStart(2,"0")+" "+ap;};
+const dt=iso=>{const d=new Date(iso+"T00:00:00");return d.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short",year:"numeric"});};
+const ok=u=>/^https?:\/\//i.test(String(u||""))?u:"";
+async function load(){
+  const t=new URLSearchParams(location.search).get("t");
+  if(!t){out.textContent="Invalid link.";return;}
+  const {data,error}=await client.rpc("shared_schedule",{p_token:t});
+  if(error){out.textContent="Could not load: "+error.message;return;}
+  if(!data||!data.length){out.textContent="No upcoming matches (or this link was revoked).";return;}
+  const g={};data.forEach(r=>(g[r.match_date]=g[r.match_date]||[]).push(r));
+  out.innerHTML=Object.keys(g).sort().map(d=>`<h2>${esc(dt(d))}</h2>`+g[d].map(r=>`<div class="m"><strong>${esc(tm(r.match_time))} - ${esc(r.match)}</strong><small>${esc(r.series)} | ${esc(r.odi_t20||"")}</small>${r.stream_platforms?`<small>Live on: ${esc(r.stream_platforms)}${ok(r.stream_link)?` <a href="${esc(ok(r.stream_link))}" target="_blank" rel="noopener">Watch</a>`:""}</small>`:""}</div>`).join("")).join("");
+}
+const out=document.getElementById("out");load();setInterval(load,300000);
+</script></body></html>
