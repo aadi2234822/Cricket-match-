@@ -6,6 +6,13 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1d5a38">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cricket Manager">
 <title>Cricket Match Manager - Online</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
@@ -48,7 +55,7 @@ button:disabled{opacity:.55;cursor:wait}
 .search{width:320px;display:block}
 .badge{font-family:'Barlow',Arial,sans-serif;font-size:14px;font-weight:700;background:var(--turf);color:#fff;padding:2px 10px;border-radius:20px;vertical-align:middle}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
-table{width:100%;border-collapse:collapse;min-width:1050px;background:#fff}
+table{width:100%;border-collapse:collapse;min-width:1400px;background:#fff}
 th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
 th{background:#eaf0e6;color:var(--turf-dark);font-weight:700;white-space:nowrap}
 tbody tr:nth-child(even){background:#fafbf8}
@@ -60,6 +67,8 @@ tbody tr:last-child td{border-bottom:0}
 .pill.done{background:var(--mint);color:var(--turf-dark);border-color:#9cc9ac}
 .pill.pending{background:#fff4dc;color:var(--amber);border-color:#e9c77d}
 .empty{text-align:center;color:var(--muted);padding:26px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.kpi{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff}.kpi strong{display:block;font-size:28px;color:var(--turf-dark)}.kpi span{font-size:13px;color:var(--muted)}.calendar-list{display:grid;gap:8px}.calendar-item{display:grid;grid-template-columns:105px 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px}.calendar-date{font-weight:700;color:var(--turf-dark)}.muted{color:var(--muted)}.status-msg{white-space:pre-line;color:var(--muted);font-size:14px;margin-top:8px}
+@media(max-width:800px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.calendar-item{grid-template-columns:1fr}.calendar-item button{justify-self:start}}
 .auth{min-height:100vh;display:grid;place-items:center;padding:20px}
 .auth-card{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;padding:0 24px 24px}
 .auth-card::before{content:"";display:block;height:14px;margin:0 -24px 22px;background:repeating-linear-gradient(90deg,#174a2f 0 28px,#1b5638 28px 56px)}
@@ -86,7 +95,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 @media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.toolbar{flex-direction:column;align-items:stretch}.search{width:100%}}
 @media(max-width:700px){
  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px}
- table{min-width:1050px;width:1050px;border-collapse:collapse}
+ table{min-width:1400px;width:1400px;border-collapse:collapse}
  thead{display:table-header-group}
  tbody{display:table-row-group}
  tbody tr{display:table-row;border:0;border-radius:0;margin:0;padding:0;background:#fff!important}
@@ -100,6 +109,31 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 @media(max-width:620px){.mline{grid-template-columns:1fr auto}.mline .timebox{grid-column:1/3;width:100%}}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.wide{grid-column:span 1}header{flex-direction:column;align-items:flex-start}header h1{font-size:30px}.container{padding:10px}.card{padding:16px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.notice{padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:14px;font-weight:600}
+.notice.warn{background:#fff4dc;color:var(--amber);border:1px solid #e9c77d}
+.notice.off{background:#fdecea;color:var(--leather);border:1px solid #f0b4ad}
+.st-select{min-height:36px;padding:4px 6px;font-size:13px;font-weight:600;border-radius:20px;width:auto;min-width:112px}
+.st-Scheduled{background:#eef2f7;border-color:#b8c4d6}
+.st-Recording{background:#fff4dc;border-color:#e9c77d;color:var(--amber)}
+.st-Recorded,.st-Editing{background:#e3f0fb;border-color:#9bc2e6;color:#1b5a8a}
+.st-Uploaded{background:var(--mint);border-color:#9cc9ac;color:var(--turf-dark)}
+.st-Postponed,.st-Abandoned,.st-Cancelled{background:#f3f3f3;border-color:#c9c9c9;color:#666}
+.att-item{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.att-item.soon{border-left-color:var(--turf)}.att-item.late{border-left-color:var(--leather)}
+.att-item small{display:block;color:var(--muted)}
+.rem-note{color:var(--muted);font-size:13px;margin:10px 0 0}
+.inline-check{flex-direction:row;align-items:center;gap:8px}.inline-check input{width:auto;min-height:0}
+.rowchk{width:20px!important;min-height:0!important;height:20px;accent-color:var(--turf)}
+.bulkbar{position:sticky;top:0;z-index:6;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#123d26;color:#fff;border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.bulkbar select,.bulkbar input{width:auto;min-height:38px;padding:4px 8px}
+.bulkbar button{min-height:38px;padding:4px 12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(18px,env(safe-area-inset-bottom));z-index:50;background:#16231b;color:#fff;border-radius:12px;padding:10px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:92vw}
+.toast button{min-height:34px;padding:4px 12px;background:#FFD600;color:#16231b;border-color:#FFD600}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40;display:grid;place-items:center;padding:16px}
+.modal .box{background:#fff;border-radius:14px;padding:18px;width:min(440px,100%);max-height:92vh;overflow:auto}
+.modal h3{margin:0 0 4px;font-family:'Barlow Condensed',Arial,sans-serif;font-size:24px;color:var(--turf-dark)}
+.ck-row{display:flex;flex-direction:row;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-weight:500}
+.ck-row input{width:22px;min-height:0;height:22px;accent-color:var(--turf)}
 </style>
 </head>
 <body>
@@ -123,8 +157,44 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
     <h1>🏏 Cricket Match Manager</h1>
     <p>Online match database</p>
   </div>
-  <div class="userbar"><span id="userEmail"></span><button id="logoutBtn">Logout</button></div>
+  <div class="userbar"><span id="userEmail"></span><button id="installBtn" class="hidden">⬇ Install app</button><button id="logoutBtn">Logout</button></div>
 </header>
+<div id="offlineBar" class="notice off hidden">Offline - showing the last synced data (view only). It will refresh when you are back online.</div>
+<div id="extraBar" class="notice warn hidden">Checklist and upload link need one-time setup: run add_v21_columns.sql in Supabase SQL Editor.</div>
+<div id="statusBar" class="notice warn hidden">Status workflow needs one-time setup: run add_status_column.sql in Supabase SQL Editor. Until then only Scheduled / Recording / Recorded / Editing / Uploaded work.</div>
+
+<section class="card">
+<h2>Recording Dashboard</h2>
+<div class="kpi-grid">
+ <div class="kpi"><strong id="kTotal">0</strong><span>Total matches</span></div>
+ <div class="kpi"><strong id="kRecorded">0</strong><span>Recorded</span></div>
+ <div class="kpi"><strong id="kRecordPending">0</strong><span>Recording pending</span></div>
+ <div class="kpi"><strong id="kUploaded">0</strong><span>Uploaded</span></div>
+ <div class="kpi"><strong id="kUploadPending">0</strong><span>Upload pending</span></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Needs Attention &amp; Reminders</h2>
+<div id="attentionList"></div>
+<p id="attentionEmpty" class="empty hidden">All clear - nothing needs attention right now.</p>
+<div class="grid" style="margin-top:12px">
+ <label>Remind me before match<select id="remLead"><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60" selected>1 hour</option><option value="120">2 hours</option><option value="360">6 hours</option></select></label>
+ <label class="inline-check" style="align-self:end"><input type="checkbox" id="remOverdue" checked> Daily pending summary</label>
+ <div class="actions" style="margin:0;align-items:end"><button id="remEnableBtn" class="primary">Enable reminders</button><button id="remTestBtn">Test</button></div>
+</div>
+<p id="remMsg" class="rem-note"></p>
+<p class="rem-note">Reminders fire while the app is open or installed and running on this device. iPhone: Share &rarr; Add to Home Screen first. Real push while fully closed needs a server (possible future upgrade).</p>
+</section>
+
+<section class="card">
+<h2>Match Calendar & Countdown</h2>
+<div class="grid">
+ <label>Show calendar<select id="calendarRange"><option value="7">Next 7 days</option><option value="30" selected>Next 30 days</option><option value="all">All upcoming</option></select></label>
+</div>
+<div id="calendarList" class="calendar-list" style="margin-top:12px"></div>
+<p id="calendarMsg" class="status-msg"></p>
+</section>
 
 <section class="card">
 <h2>Auto fetch: enter a series name to load all its matches</h2>
@@ -172,6 +242,7 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 <label class="wide">Match<input id="match" placeholder="Team A vs Team B" required></label>
 <label>ODI / T20<select id="odiT20" required><option value="">Select</option><option>ODI</option><option>T20</option></select></label>
 <label>Expected Overs<input id="expected" type="number" readonly></label>
+<label>Status<select id="status"><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select></label>
 <label>Recorded<select id="recorded"><option>Pending</option><option>Done</option></select></label>
 <label>Uploaded<select id="uploaded"><option>Pending</option><option>Done</option></select></label>
 <label class="wide">Recording Remarks<textarea id="remarks" class="remarks-input" rows="3" placeholder="Enter recording remarks..."></textarea></label>
@@ -185,17 +256,35 @@ td.remarks-cell{border-bottom:1px solid var(--line);background:transparent}
 
 <section class="card">
 <div class="toolbar">
-<div><h2>All Matches <span id="count" class="badge">0</span></h2><input id="search" class="search" placeholder="Search..."></div>
-<div class="actions"><button id="importBtn">Import Excel</button><button id="clearAllBtn" class="danger">Delete All</button><input id="fileInput" type="file" accept=".xlsx,.xls" hidden></div>
+<div><h2>All Matches <span id="count" class="badge">0</span></h2><input id="search" class="search" placeholder="Search..."><select id="statusFilter" class="search" style="margin-top:8px"><option value="">All statuses</option><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select></div>
+<div class="actions"><button id="importBtn">Import Excel</button><button id="backupBtn">Backup JSON</button><button id="restoreBtn">Restore JSON</button><button id="clearAllBtn" class="danger">Delete All</button><input id="fileInput" type="file" accept=".xlsx,.xls" hidden><input id="backupInput" type="file" accept=".json,application/json" hidden></div>
 </div>
+<div class="grid" style="margin:12px 0">
+<label>Report from<input type="date" id="reportFrom"></label><label>Report to<input type="date" id="reportTo"></label><div class="actions" style="align-items:end"><button id="rangeExcelBtn" class="primary">Download date-range Excel</button></div>
+</div>
+<div id="bulkBar" class="bulkbar hidden"><strong id="selCount"></strong>
+ <select id="bulkStatus"><option>Scheduled</option><option>Recording</option><option>Recorded</option><option>Editing</option><option>Uploaded</option><option>Postponed</option><option>Abandoned</option><option>Cancelled</option></select><button id="bulkStatusBtn">Set status</button>
+ <input id="bulkShift" type="number" value="1" title="Days (negative = earlier)" style="width:70px"><button id="bulkShiftBtn">Shift days</button>
+ <button id="bulkDelBtn" class="danger">Delete</button><button id="bulkClearBtn">Clear</button></div>
 <div id="monthDownloadButtons" class="month-downloads"></div>
 <div class="table-wrap">
-<table><thead><tr><th>Date</th><th>Time</th><th>Series</th><th>Match</th><th>ODI/T20</th><th>Expected</th><th>Recorded</th><th>Uploaded</th><th>Remarks</th><th>Action</th></tr></thead>
+<table><thead><tr><th><input type="checkbox" id="selAll" class="rowchk" title="Select all shown"></th><th>Date</th><th>Time</th><th>Series</th><th>Match</th><th>ODI/T20</th><th>Expected</th><th>Recorded</th><th>Uploaded</th><th>Status</th><th>Checklist</th><th>Remarks</th><th>Action</th></tr></thead>
 <tbody id="matchTable"></tbody></table>
 </div>
 <p id="empty" class="empty">No matches found.</p>
 </section>
-<footer>Online data is stored in Supabase. | Version 17</footer>
+<footer>Online data is stored in Supabase with per-user access rules. | Version 21</footer>
+<div id="toast" class="toast hidden"><span id="toastMsg"></span><button id="toastUndo">Undo</button></div>
+<div id="ckModal" class="modal hidden"><div class="box">
+ <h3 id="ckTitle"></h3><p style="margin:0 0 8px;color:var(--muted);font-size:14px">Checklist and upload link</p>
+ <label class="ck-row"><input type="checkbox" id="ck_rec">Recorded</label>
+ <label class="ck-row"><input type="checkbox" id="ck_trim">Trimmed / edited</label>
+ <label class="ck-row"><input type="checkbox" id="ck_thumb">Thumbnail ready</label>
+ <label class="ck-row"><input type="checkbox" id="ck_title">Title &amp; description</label>
+ <label class="ck-row"><input type="checkbox" id="ck_upl">Uploaded &amp; checked</label>
+ <label style="margin-top:12px">Upload link (YouTube etc.)<input id="ckLink" type="url" placeholder="https://..."></label>
+ <div class="actions"><button id="ckSave" class="primary">Save</button><button id="ckCancel">Cancel</button></div>
+</div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -247,6 +336,7 @@ function getTP(w){
   return `${pad(h)}:${w.querySelector(".tm").value}:00`;
 }
 function overs(type){return type==="ODI"?100:type==="T20"?40:null;}
+function matchKey(r){return [r.match_date,String(r.match_time||"").slice(0,5),String(r.series||"").trim().toLowerCase().replace(/\s+/g," "),String(r.match||"").trim().toLowerCase().replace(/\s+/g," ")].join("|");}
 
 /* ---------- Auth ---------- */
 async function init(){
@@ -281,9 +371,20 @@ $("matchForm").addEventListener("submit",async e=>{
  const d=parseDMY($("date").value);
  if(!d){alert("Enter the date as dd-mm-yyyy (for example 15-09-2026).");return;}
  const row={format:$("format").value.trim(),match_date:d,match_time:getTP(timePicker),series:$("series").value.trim(),match:$("match").value.trim(),odi_t20:$("odiT20").value,expected_overs:Number($("expected").value)||null,recorded:$("recorded").value,uploaded:$("uploaded").value,recording_remarks:$("remarks").value.trim()};
- let result;
- if(editingId) result=await client.from("matches").update(row).eq("id",editingId);
- else result=await client.from("matches").insert(row);
+ const stSel=$("status").value; if(hasStatus!==false&&stSel) row.status=stSel;
+  const duplicate=allMatches.find(r=>r.id!==editingId&&matchKey(r)===matchKey(row));
+  if(duplicate){alert("Possible duplicate found: "+duplicate.series+" | "+duplicate.match+" | "+fmtDate(duplicate.match_date)+". Please check before saving.");return;}
+  {const cl=INACTIVE.includes($("status").value)?[]:clashesWith(row,editingId); if(cl.length&&!confirm("⚠ Time overlap with: "+cl.slice(0,3).map(o=>o.match+" ("+fmtTime(o.match_time)+")").join(", ")+"\n\nSave anyway?"))return;}
+  let result;
+  if(editingId){
+    const old=allMatches.find(r=>r.id===editingId);
+    if(old&&(old.match_date!==row.match_date||String(old.match_time||"").slice(0,5)!==String(row.match_time||"").slice(0,5))){
+      const hist={match_id:old.id,old_date:old.match_date,old_time:old.match_time,new_date:row.match_date,new_time:row.match_time,series:old.series,match_name:old.match,changed_at:new Date().toISOString()};
+      const h=await client.from("match_reschedule_history").insert(hist);
+      if(h.error){alert("Reschedule history table is not ready. Run setup_reschedule_history.sql in Supabase first. Details: "+h.error.message);return;}
+    }
+    result=await client.from("matches").update(row).eq("id",editingId);
+  } else result=await client.from("matches").insert(row);
  if(result.error){alert(result.error.message);return;}
  resetForm(); await render();
 });
@@ -335,11 +436,18 @@ $("bulkSaveBtn").addEventListener("click",async()=>{
     }
   }
   if(!rows.length){alert("Add at least one match.");return;}
+  const seen=new Set(allMatches.map(matchKey)); const unique=[]; let dup=0;
+  for(const r of rows){const k=matchKey(r);if(seen.has(k)){dup++;continue;}seen.add(k);unique.push(r);}
+  if(!unique.length){alert("All "+dup+" match(es) look like duplicates. Nothing was saved.");return;}
+  if(dup&&!confirm(dup+" possible duplicate(s) will be skipped. Save the remaining "+unique.length+" match(es)?"))return;
+  {let cn=0;const tmp=unique.map(r=>({...r,id:"new"+Math.random()}));const pool=allMatches.filter(o=>!INACTIVE.includes(effStatus(o)));
+   for(let i=0;i<tmp.length;i++){const a=tmp[i];if(pool.some(o=>startOf(o)<endOf(a)&&startOf(a)<endOf(o))||tmp.some((b,j)=>j!==i&&startOf(b)<endOf(a)&&startOf(a)<endOf(b)))cn++;}
+   if(cn&&!confirm(cn+" of these match(es) overlap in time with other matches. Save anyway?"))return;}
   $("bulkSaveBtn").disabled=true;
-  const {error}=await client.from("matches").insert(rows);
+  const {error}=await client.from("matches").insert(unique);
   $("bulkSaveBtn").disabled=false;
   if(error){alert(error.message);return;}
-  alert(rows.length+" match(es) added.");
+  alert(unique.length+" match(es) added. "+dup+" duplicate(s) skipped.");
   resetBulkGroups(); $("bRemarks").value=""; await render();
 });
 
@@ -352,24 +460,31 @@ async function fetchOrdered(){
 
 /* ---------- Table ---------- */
 async function render(){
- const {data,error}=await fetchOrdered();
- if(error){alert(error.message);return}
+ let data,error;
+ try{({data,error}=await fetchOrdered());}catch(e){error=e;}
+ if(error){
+  const c=(!navigator.onLine||/fetch|network|load failed/i.test(String(error.message||error)))?loadCache():null;
+  if(c){data=c;setOffline(true);}else{alert(error.message||error);return;}
+ } else {setOffline(false);saveCache(data);}
  allMatches=data||[];
+ if(!offlineMode){ if(allMatches.length){hasStatus=('status' in allMatches[0]);hasExtra=('checklist' in allMatches[0]);} else {const pr=await client.from("matches").select("status").limit(1); hasStatus=!pr.error; const pe=await client.from("matches").select("checklist,video_link").limit(1); hasExtra=!pe.error;} $("statusBar").classList.toggle("hidden",hasStatus!==false); $("extraBar").classList.toggle("hidden",hasExtra!==false); }
+ updateDashboard(allMatches); renderCalendar(allMatches); renderAttention(allMatches); checkReminders();
  const q=$("search").value.toLowerCase().trim();
- const rows=allMatches.filter(r=>!q||[...Object.values(r),fmtDate(r.match_date),fmtTime(r.match_time)].some(v=>String(v??"").toLowerCase().includes(q)));
+ const sf=$("statusFilter").value; const rows=allMatches.filter(r=>(!sf||effStatus(r)===sf)&&(!q||[...Object.values(r),fmtDate(r.match_date),fmtTime(r.match_time)].some(v=>String(v??"").toLowerCase().includes(q))));
  $("count").textContent=allMatches.length;$("empty").style.display=rows.length?"none":"block";
  renderMonthDownloadButtons(allMatches);
  const pill=v=>`<span class="pill ${v==="Done"?"done":"pending"}">${esc(v)}</span>`;
- $("matchTable").innerHTML=rows.map(r=>`<tr><td data-label="Date">${esc(fmtDate(r.match_date))}</td><td data-label="Time">${esc(fmtTime(r.match_time))}</td><td data-label="Series">${esc(r.series)}</td><td data-label="Match">${esc(r.match)}</td><td data-label="ODI/T20">${esc(r.odi_t20)}</td><td data-label="Expected">${esc(r.expected_overs)}</td><td data-label="Recorded">${pill(r.recorded)}</td><td data-label="Uploaded">${pill(r.uploaded)}</td><td class="remarks-cell" data-label="Remarks">${esc(r.recording_remarks)}</td><td><button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button></td></tr>`).join("");
+ $("matchTable").innerHTML=rows.map(r=>`<tr><td><input type="checkbox" class="rowchk" data-id="${r.id}"${sel.has(r.id)?" checked":""}></td><td data-label="Date">${esc(fmtDate(r.match_date))}</td><td data-label="Time">${esc(fmtTime(r.match_time))}</td><td data-label="Series">${esc(r.series)}</td><td data-label="Match">${esc(r.match)}${clashSet.has(r.id)?' <span title="Overlaps another match" style="color:var(--leather)">⚠</span>':""}</td><td data-label="ODI/T20">${esc(r.odi_t20)}</td><td data-label="Expected">${esc(r.expected_overs)}</td><td data-label="Recorded">${pill(r.recorded)}</td><td data-label="Uploaded">${pill(r.uploaded)}</td><td data-label="Status">${statusCell(r)}</td><td data-label="Checklist">${ckCell(r)}</td><td class="remarks-cell" data-label="Remarks">${esc(r.recording_remarks)}</td><td><button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button> <button class="small-btn" onclick="showRescheduleHistory('${r.id}')">History</button> <button class="small-btn delete" onclick="deleteMatch('${r.id}')">Delete</button></td></tr>`).join("");
+ updateBulkBar();
 }
 window.editMatch=async id=>{
  const r=allMatches.find(x=>x.id===id);if(!r)return;editingId=id;
- $("format").value=r.format||"Cricket";$("date").value=fmtDate(r.match_date);setTP(timePicker,(r.match_time||"09:00").slice(0,5));$("series").value=r.series||"";$("match").value=r.match||"";$("odiT20").value=r.odi_t20||"";$("expected").value=r.expected_overs||"";$("recorded").value=r.recorded||"Pending";$("uploaded").value=r.uploaded||"Pending";$("remarks").value=r.recording_remarks||"";$("submitBtn").textContent="Update Match";
+ $("format").value=r.format||"Cricket";$("date").value=fmtDate(r.match_date);setTP(timePicker,(r.match_time||"09:00").slice(0,5));$("series").value=r.series||"";$("match").value=r.match||"";$("odiT20").value=r.odi_t20||"";$("expected").value=r.expected_overs||"";$("recorded").value=r.recorded||"Pending";$("uploaded").value=r.uploaded||"Pending";$("remarks").value=r.recording_remarks||"";$("status").value=effStatus(r);$("submitBtn").textContent="Update Match";
  $("matchForm").scrollIntoView({behavior:"smooth"});
 };
 window.deleteMatch=async id=>{if(confirm("Delete this match?")){const {error}=await client.from("matches").delete().eq("id",id);if(error)alert(error.message);else render();}};
-$("clearBtn").addEventListener("click",resetForm);$("search").addEventListener("input",render);
-$("clearAllBtn").addEventListener("click",async()=>{if(!confirm("Delete ALL your matches?"))return;const {error}=await client.from("matches").delete().not("id","is",null);if(error)alert(error.message);else render();});
+$("clearBtn").addEventListener("click",resetForm);$("search").addEventListener("input",render);$("statusFilter").addEventListener("change",render);
+$("clearAllBtn").addEventListener("click",async()=>{if(!confirm("Delete ALL your matches?"))return;await deleteRows(allMatches.slice(),"All matches deleted");});
 
 /* ---------- Month-wise Excel download buttons ---------- */
 const MONTH_NAMES=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -396,7 +511,7 @@ function makeExcelWorkbook(rows,key){
   const base={font:{name:"Arial",sz:12},alignment:{horizontal:"center",vertical:"center"}};
   const left={...base,alignment:{horizontal:"left",vertical:"center"}};
   const remStyle={...left};
-  const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks"];
+  const heads=["Date","Time","Series","Match","ODI/T20","Expected Overs","Recorded","Uploaded","Recording Remarks","Status","Upload Link"];
   const aoa=[heads.map(h=>({v:h,t:"s",s:hdrStyle}))];
   for(const r of rows){
     const serial=r.match_date?Math.round((Date.UTC(...r.match_date.split("-").map((x,i)=>i===1?+x-1:+x))-Date.UTC(1899,11,30))/86400000):"";
@@ -407,11 +522,11 @@ function makeExcelWorkbook(rows,key){
       {v:r.odi_t20||"",t:"s",s:left},
       r.expected_overs?{v:r.expected_overs,t:"n",s:left}:{v:"",t:"s",s:left},
       {v:r.recorded||"",t:"s",s:base},{v:r.uploaded||"",t:"s",s:base},
-      {v:r.recording_remarks||"",t:"s",s:remStyle}
+      {v:r.recording_remarks||"",t:"s",s:remStyle},{v:effStatus(r),t:"s",s:base},{v:r.video_link||"",t:"s",s:left}
     ]);
   }
   const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14].map(w=>({wch:w}));
+  ws["!cols"]=[12.57,10.43,39.57,65.29,36.14,38.43,20.71,22.43,25.14,16,40].map(w=>({wch:w}));
   ws["!rows"]=[{hpt:24}];
   const [year,month]=key.split("-").map(Number);
   const sheetName=`${MONTH_NAMES[month-1].slice(0,3)}${year}`;
@@ -434,6 +549,33 @@ async function downloadMonthExcel(key){
   link.href=url; link.download=fname; document.body.appendChild(link); link.click();
   setTimeout(()=>{link.remove();URL.revokeObjectURL(url);},5000);
 }
+
+/* ---------- Dashboard / Calendar / Backup / Report / Reschedule history ---------- */
+function updateDashboard(rows){
+ rows=rows.filter(r=>!INACTIVE.includes(effStatus(r)));
+ const n=(fn)=>rows.filter(fn).length;
+ $("kTotal").textContent=rows.length;
+ $("kRecorded").textContent=n(r=>r.recorded==="Done");
+ $("kRecordPending").textContent=n(r=>r.recorded!=="Done");
+ $("kUploaded").textContent=n(r=>r.uploaded==="Done");
+ $("kUploadPending").textContent=n(r=>r.uploaded!=="Done");
+}
+function renderCalendar(rows){
+ const now=new Date(), start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ const range=$("calendarRange").value;
+ const upcoming=rows.filter(r=>{if(!r.match_date)return false;const dt=new Date(r.match_date+"T"+(r.match_time||"00:00:00"));return dt>=start&&(range==="all"||dt<new Date(start.getTime()+Number(range)*86400000));}).sort((a,b)=>(a.match_date+(a.match_time||"")).localeCompare(b.match_date+(b.match_time||"")));
+ $("calendarList").innerHTML=upcoming.slice(0,100).map(r=>{const dt=new Date(r.match_date+"T"+(r.match_time||"00:00:00"));const mins=Math.max(0,Math.floor((dt-now)/60000));let countdown=dt<now?"Started / time passed":mins>=1440?Math.floor(mins/1440)+"d "+Math.floor(mins%1440/60)+"h left":mins>=60?Math.floor(mins/60)+"h "+mins%60+"m left":mins+"m left";return `<div class="calendar-item"><div class="calendar-date">${esc(fmtDate(r.match_date))}<br><span class="muted">${esc(fmtTime(r.match_time))}</span></div><div><strong>${esc(r.match)}</strong><br><span class="muted">${esc(r.series)} · ${esc(r.odi_t20)}</span></div><div><span class="pill ${r.recorded==="Done"?"done":"pending"}">${esc(r.recorded||"Pending")}</span><br><small>${esc(countdown)}</small></div></div>`}).join("");
+ $("calendarMsg").textContent=upcoming.length?`Showing ${Math.min(upcoming.length,100)} upcoming match(es). Countdown is based on this device's local time.`:"No upcoming matches in this range.";
+}
+$("calendarRange").addEventListener("change",()=>renderCalendar(allMatches));
+setInterval(()=>{if(!$("app").classList.contains("hidden"))renderCalendar(allMatches);},60000);
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},5000);}
+$("backupBtn").addEventListener("click",()=>{const payload={app:"Cricket Match Manager",version:21,exported_at:new Date().toISOString(),matches:allMatches};downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),`Cricket_Match_Backup_${new Date().toISOString().slice(0,10)}.json`);});
+$("restoreBtn").addEventListener("click",()=>$("backupInput").click());
+$("backupInput").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const rows=Array.isArray(obj)?obj:obj.matches;if(!Array.isArray(rows))throw new Error("Backup file does not contain a matches array.");const seen=new Set(allMatches.map(matchKey)),out=[];let dup=0,bad=0;for(const x of rows){const d=String(x.match_date||"").slice(0,10),type=String(x.odi_t20||"").toUpperCase(),series=String(x.series||"").trim(),match=String(x.match||"").trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!series||!match||!['ODI','T20'].includes(type)){bad++;continue;}const r={format:x.format||"Cricket",match_date:d,match_time:x.match_time||null,series,match,odi_t20:type,expected_overs:overs(type),recorded:x.recorded==="Done"?"Done":"Pending",uploaded:x.uploaded==="Done"?"Done":"Pending",recording_remarks:x.recording_remarks||""};if(hasStatus!==false)r.status=ALL_ST.includes(x.status)?x.status:(r.uploaded==="Done"?"Uploaded":r.recorded==="Done"?"Recorded":"Scheduled");if(hasExtra!==false){r.video_link=safeLink(x.video_link);r.checklist=(x.checklist&&typeof x.checklist==="object")?x.checklist:{};}const k=matchKey(r);if(seen.has(k)){dup++;continue;}seen.add(k);out.push(r);}if(!out.length){alert(`Nothing to restore. Duplicates: ${dup}; invalid rows: ${bad}.`);return;}if(!confirm(`Restore ${out.length} match(es)? Duplicates skipped: ${dup}; invalid rows skipped: ${bad}.`))return;let saved=0;for(let i=0;i<out.length;i+=100){const {error}=await client.from("matches").insert(out.slice(i,i+100));if(error)throw error;saved+=Math.min(100,out.length-i);}alert(`Restored ${saved} match(es). Duplicates skipped: ${dup}; invalid rows: ${bad}.`);await render();}catch(err){alert("Restore failed: "+(err.message||err));}e.target.value="";});
+$("rangeExcelBtn").addEventListener("click",()=>{if(typeof XLSX==="undefined"){alert("Excel library did not load. Check internet and refresh.");return;}const from=$("reportFrom").value,to=$("reportTo").value;if(from&&to&&from>to){alert("Report start date must be before end date.");return;}const rows=allMatches.filter(r=>(!from||r.match_date>=from)&&(!to||r.match_date<=to));if(!rows.length){alert("No matches found in the selected date range.");return;}const wb=makeExcelWorkbook(rows,monthKey(rows[0].match_date)||"2026-01");const arr=XLSX.write(wb,{bookType:"xlsx",type:"array"});downloadBlob(new Blob([arr],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),`Cricket_Matches_${from||"start"}_to_${to||"end"}.xlsx`);});
+async function showRescheduleHistory(id){const {data,error}=await client.from("match_reschedule_history").select("*").eq("match_id",id).order("changed_at",{ascending:false});if(error){alert("Run setup_reschedule_history.sql in Supabase first. "+error.message);return;}if(!data.length){alert("No reschedule history for this match.");return;}alert(data.map(x=>`${new Date(x.changed_at).toLocaleString()}\n${fmtDate(x.old_date)} ${fmtTime(x.old_time)} → ${fmtDate(x.new_date)} ${fmtTime(x.new_time)}`).join("\n\n"));}
+window.showRescheduleHistory=showRescheduleHistory;
 
 /* ---------- Excel import ---------- */
 $("importBtn").addEventListener("click",()=>$("fileInput").click());
@@ -480,7 +622,12 @@ $("fileInput").addEventListener("change",async e=>{
     const key=kf(d,t,series,match);
     if(seen.has(key)){skipped++;return;}
     seen.add(key);
-    out.push({format:String(x["format"]||"Cricket").trim()||"Cricket",match_date:d,match_time:t,series,match,odi_t20:type,expected_overs:(ex===40||ex===100)?ex:overs(type),recorded:rec.val,uploaded:upl.val,recording_remarks:remarks});
+    const nr={format:String(x["format"]||"Cricket").trim()||"Cricket",match_date:d,match_time:t,series,match,odi_t20:type,expected_overs:(ex===40||ex===100)?ex:overs(type),recorded:rec.val,uploaded:upl.val,recording_remarks:remarks};
+    const stx=ALL_ST.find(z=>z.toLowerCase()===String(x["status"]||"").trim().toLowerCase());
+    if(stx) Object.assign(nr,deriveFlags(stx));
+    if(hasStatus!==false) nr.status=stx||effStatus(nr);
+    if(hasExtra!==false) nr.video_link=safeLink(x["upload link"]||x["link"]);
+    out.push(nr);
   });
   let n=0;
   for(let k=0;k<out.length;k+=100){
@@ -591,7 +738,221 @@ $("afSaveBtn").addEventListener("click",async()=>{
   render();
 });
 
+/* ================= v20: Status workflow ================= */
+const FLOW=["Scheduled","Recording","Recorded","Editing","Uploaded"];
+const INACTIVE=["Postponed","Abandoned","Cancelled"];
+const ALL_ST=[...FLOW,...INACTIVE];
+let hasStatus=null, offlineMode=false;
+function effStatus(r){
+  if(r.status && r.status!=="Scheduled") return r.status;
+  if(r.uploaded==="Done") return "Uploaded";
+  if(r.recorded==="Done") return "Recorded";
+  return "Scheduled";
+}
+function deriveFlags(st){
+  if(st==="Uploaded") return {recorded:"Done",uploaded:"Done"};
+  if(st==="Recorded"||st==="Editing") return {recorded:"Done",uploaded:"Pending"};
+  if(st==="Scheduled"||st==="Recording") return {recorded:"Pending",uploaded:"Pending"};
+  return {};
+}
+function statusCell(r){
+  const cur=effStatus(r);
+  return `<select class="st-select st-${cur}" onchange="setStatus('${r.id}',this.value)">${ALL_ST.map(x=>`<option${x===cur?" selected":""}>${x}</option>`).join("")}</select>`;
+}
+window.setStatus=async(id,val)=>{
+  if(hasStatus===false&&INACTIVE.includes(val)){alert("Run add_status_column.sql in Supabase first to use "+val+".");render();return;}
+  const upd=deriveFlags(val); if(hasStatus!==false) upd.status=val;
+  const {error}=await client.from("matches").update(upd).eq("id",id);
+  if(error)alert(error.message); render();
+};
+$("status").addEventListener("change",()=>{const f=deriveFlags($("status").value);if(f.recorded){$("recorded").value=f.recorded;$("uploaded").value=f.uploaded;}});
+function syncStatusFromFlags(){
+  if(INACTIVE.includes($("status").value))return;
+  $("status").value=$("uploaded").value==="Done"?"Uploaded":$("recorded").value==="Done"?(["Editing"].includes($("status").value)?"Editing":"Recorded"):($("status").value==="Recording"?"Recording":"Scheduled");
+}
+$("recorded").addEventListener("change",syncStatusFromFlags);$("uploaded").addEventListener("change",syncStatusFromFlags);
+
+/* ================= v20: Offline cache ================= */
+const CACHE_KEY="cmm_cache_v20";
+function saveCache(d){try{localStorage.setItem(CACHE_KEY,JSON.stringify(d||[]));}catch(e){}}
+function loadCache(){try{const v=localStorage.getItem(CACHE_KEY);return v?JSON.parse(v):null;}catch(e){return null;}}
+function setOffline(on){offlineMode=on;$("offlineBar").classList.toggle("hidden",!on);}
+window.addEventListener("offline",()=>setOffline(true));
+window.addEventListener("online",()=>{if(!$("app").classList.contains("hidden"))render();});
+
+/* ================= v20: Needs attention + reminders ================= */
+const startOf=r=>new Date(r.match_date+"T"+(r.match_time||"00:00:00"));
+const human=m=>{m=Math.max(0,Math.round(m));const d=Math.floor(m/1440),h=Math.floor(m%1440/60),mi=m%60;return d?`${d}d ${h}h`:h?`${h}h ${mi}m`:`${mi}m`;};
+function attentionItems(rows){
+  const now=new Date(),out=[];
+  for(const r of rows){
+    const st=effStatus(r); if(INACTIVE.includes(st)||st==="Uploaded") continue;
+    const mins=(startOf(r)-now)/60000;
+    if(mins>=0&&mins<=1440&&(st==="Scheduled"||st==="Recording")) out.push({r,kind:"soon",txt:`Starts in ${human(mins)}`,mins});
+    else if(mins<0&&st==="Scheduled") out.push({r,kind:"late",txt:`Match time passed ${human(-mins)} ago - still Scheduled`,mins});
+    else if(mins<-1440&&(st==="Recorded"||st==="Editing"||st==="Recording")) out.push({r,kind:"late",txt:`${st} - upload pending for ${Math.floor(-mins/1440)} day(s)`,mins});
+  }
+  return out.sort((a,b)=>(a.kind==="soon"?0:1)-(b.kind==="soon"?0:1)||Math.abs(a.mins)-Math.abs(b.mins));
+}
+function renderAttention(rows){
+  const items=attentionItems(rows).concat(computeClashes(rows).slice(0,10).map(([a,b])=>({r:a,kind:"late",txt:`⚠ Overlaps with ${b.match} (${fmtTime(b.match_time)})`,mins:(startOf(a)-new Date())/60000})));
+  $("attentionEmpty").classList.toggle("hidden",items.length>0);
+  $("attentionList").innerHTML=items.slice(0,20).map(({r,kind,txt})=>`<div class="att-item ${kind}"><div><strong>${esc(r.match)}</strong><small>${esc(r.series)} | ${esc(fmtDate(r.match_date))} ${esc(fmtTime(r.match_time))} | ${esc(txt)}</small></div><div>${statusCell(r)} <button class="small-btn edit" onclick="editMatch('${r.id}')">Edit</button></div></div>`).join("")+(items.length>20?`<p class="rem-note">+${items.length-20} more</p>`:"");
+  document.title=(items.length?`(${items.length}) `:"")+"Cricket Match Manager - Online";
+}
+const REM_KEY="cmm_rem_v20",FIRED_KEY="cmm_fired_v20";
+const remCfg=()=>{try{return Object.assign({on:false,lead:60,overdue:true},JSON.parse(localStorage.getItem(REM_KEY)||"{}"));}catch(e){return {on:false,lead:60,overdue:true};}};
+const saveRem=c=>{try{localStorage.setItem(REM_KEY,JSON.stringify(c));}catch(e){}};
+const fired=()=>{try{return JSON.parse(localStorage.getItem(FIRED_KEY)||"{}");}catch(e){return {};}};
+const saveFired=f=>{try{const cut=Date.now()-3*864e5;for(const k in f)if(f[k]<cut)delete f[k];localStorage.setItem(FIRED_KEY,JSON.stringify(f));}catch(e){}};
+async function notify(title,body,tag){
+  if(!("Notification" in window)||Notification.permission!=="granted") return false;
+  try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();
+    if(reg){await reg.showNotification(title,{body,tag,icon:"icon-192.png",badge:"icon-192.png"});return true;}}catch(e){}
+  try{new Notification(title,{body,tag,icon:"icon-192.png"});return true;}catch(e){return false;}
+}
+function remUI(){
+  const c=remCfg(),ok=("Notification" in window)&&Notification.permission==="granted"&&c.on;
+  $("remLead").value=String(c.lead);$("remOverdue").checked=!!c.overdue;
+  $("remEnableBtn").textContent=ok?"Reminders ON (tap to turn off)":"Enable reminders";
+  $("remMsg").textContent=!("Notification" in window)?"This browser does not support notifications. Install the app (Chrome / Add to Home Screen) or use a full browser.":
+    Notification.permission==="denied"?"Notifications are blocked for this site. Allow them in browser settings.":ok?"Reminders are active on this device.":"";
+}
+$("remEnableBtn").addEventListener("click",async()=>{
+  const c=remCfg();
+  if(c.on&&("Notification" in window)&&Notification.permission==="granted"){c.on=false;saveRem(c);remUI();return;}
+  if(!("Notification" in window)){remUI();return;}
+  const p=await Notification.requestPermission();
+  c.on=p==="granted";saveRem(c);remUI();if(c.on)notify("Reminders enabled","You will be alerted before each match.","cmm-enabled");
+});
+$("remTestBtn").addEventListener("click",async()=>{const ok=await notify("Test reminder","Notifications are working.","cmm-test");if(!ok)$("remMsg").textContent="Could not show a notification. Tap Enable reminders and allow permission first.";});
+$("remLead").addEventListener("change",()=>{const c=remCfg();c.lead=+$("remLead").value;saveRem(c);});
+$("remOverdue").addEventListener("change",()=>{const c=remCfg();c.overdue=$("remOverdue").checked;saveRem(c);});
+async function checkReminders(){
+  const c=remCfg(); if(!c.on||$("app").classList.contains("hidden")||!allMatches.length) return;
+  const f=fired(),now=new Date(); let changed=false;
+  for(const r of allMatches){
+    const st=effStatus(r); if(INACTIVE.includes(st)||st==="Uploaded"||st==="Recorded"||st==="Editing") continue;
+    const mins=(startOf(r)-now)/60000, base=`${r.id}|${r.match_date}|${String(r.match_time||"").slice(0,5)}`;
+    if(mins>0&&mins<=c.lead&&!f[base+"|lead"]){f[base+"|lead"]=Date.now();changed=true;await notify(`Match in ${human(mins)}`,`${r.match} (${r.series}) at ${fmtTime(r.match_time)}`,base+"|lead");}
+    if(mins<=0&&mins>-10&&!f[base+"|start"]){f[base+"|start"]=Date.now();changed=true;await notify("Match starting now",`${r.match} (${r.series}) - start recording`,base+"|start");}
+  }
+  if(c.overdue){
+    const day="od-"+new Date().toISOString().slice(0,10);
+    if(!f[day]){const late=attentionItems(allMatches).filter(x=>x.kind==="late");
+      if(late.length){f[day]=Date.now();changed=true;await notify(`${late.length} match(es) need attention`,late.slice(0,3).map(x=>x.r.match).join(", "),day);}}
+  }
+  if(changed)saveFired(f);
+}
+setInterval(()=>{if(!$("app").classList.contains("hidden")){renderAttention(allMatches);checkReminders();}},30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){renderAttention(allMatches);checkReminders();}});
+remUI();
+
+/* ================= v20: PWA ================= */
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").classList.remove("hidden");});
+$("installBtn").addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden");});
+window.addEventListener("appinstalled",()=>$("installBtn").classList.add("hidden"));
+if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+
+/* ================= v21: overlap warning ================= */
+let hasExtra=null; const sel=new Set(); let undoAct=null,undoTimer=null,ckId=null,clashSet=new Set();
+const durH=r=>r.odi_t20==="ODI"?8:3.5;   /* estimated match length in hours */
+const endOf=r=>new Date(startOf(r).getTime()+durH(r)*36e5);
+function clashesWith(row,exceptId){return allMatches.filter(o=>o.id!==exceptId&&!INACTIVE.includes(effStatus(o))&&startOf(o)<endOf(row)&&startOf(row)<endOf(o));}
+function computeClashes(rows){
+  const now=Date.now(),pairs=[]; clashSet=new Set();
+  const act=rows.filter(r=>!INACTIVE.includes(effStatus(r))&&endOf(r)>now).sort((a,b)=>startOf(a)-startOf(b));
+  for(let i=0;i<act.length;i++)for(let j=i+1;j<act.length&&startOf(act[j])<endOf(act[i]);j++){clashSet.add(act[i].id);clashSet.add(act[j].id);pairs.push([act[i],act[j]]);}
+  return pairs;
+}
+
+/* ================= v21: toast + undo ================= */
+function setUndo(msg,fn){clearTimeout(undoTimer);undoAct=fn;$("toastMsg").textContent=msg;$("toastUndo").classList.toggle("hidden",!fn);$("toast").classList.remove("hidden");undoTimer=setTimeout(hideToast,12000);}
+function hideToast(){$("toast").classList.add("hidden");undoAct=null;}
+$("toastUndo").addEventListener("click",async()=>{const f=undoAct;hideToast();if(f){try{await f();}catch(e){alert("Undo failed: "+(e.message||e));}await render();}});
+const cleanRow=r=>{const {seq,...x}=r;return x;};
+async function deleteRows(rows,label){
+  if(!rows.length)return;
+  const ids=rows.map(r=>r.id); let hist=[];
+  try{for(let i=0;i<ids.length;i+=100){const h=await client.from("match_reschedule_history").select("*").in("match_id",ids.slice(i,i+100));if(!h.error&&h.data)hist=hist.concat(h.data);}}catch(e){}
+  for(let i=0;i<ids.length;i+=100){const {error}=await client.from("matches").delete().in("id",ids.slice(i,i+100));if(error){alert(error.message);await render();return;}}
+  ids.forEach(i=>sel.delete(i));
+  const snap=rows.map(cleanRow);
+  setUndo(label,async()=>{
+    for(let i=0;i<snap.length;i+=100){const {error}=await client.from("matches").insert(snap.slice(i,i+100));if(error)throw error;}
+    for(let i=0;i<hist.length;i+=100){await client.from("match_reschedule_history").insert(hist.slice(i,i+100));}
+  });
+  await render();
+}
+window.deleteMatch=async id=>{const r=allMatches.find(x=>x.id===id);if(r)await deleteRows([r],"Match deleted");};
+window.setStatus=async(id,val)=>{
+  if(hasStatus===false&&INACTIVE.includes(val)){alert("Run add_status_column.sql in Supabase first to use "+val+".");render();return;}
+  const r=allMatches.find(x=>x.id===id); const old={recorded:r?r.recorded:"Pending",uploaded:r?r.uploaded:"Pending"}; if(hasStatus!==false&&r)old.status=r.status||"Scheduled";
+  const upd=deriveFlags(val); if(hasStatus!==false)upd.status=val;
+  const {error}=await client.from("matches").update(upd).eq("id",id);
+  if(error){alert(error.message);render();return;}
+  setUndo("Status set to "+val,async()=>{await client.from("matches").update(old).eq("id",id);}); render();
+};
+
+/* ================= v21: multi-select + bulk actions ================= */
+function updateBulkBar(){
+  for(const id of [...sel]) if(!allMatches.some(r=>r.id===id)) sel.delete(id);
+  $("bulkBar").classList.toggle("hidden",!sel.size); $("selCount").textContent=sel.size+" selected";
+  const vis=[...document.querySelectorAll("#matchTable .rowchk")]; $("selAll").checked=vis.length>0&&vis.every(c=>c.checked);
+}
+$("matchTable").addEventListener("change",e=>{const c=e.target;if(c.classList&&c.classList.contains("rowchk")){c.checked?sel.add(c.dataset.id):sel.delete(c.dataset.id);updateBulkBar();}});
+$("selAll").addEventListener("change",()=>{const on=$("selAll").checked;document.querySelectorAll("#matchTable .rowchk").forEach(c=>{c.checked=on;on?sel.add(c.dataset.id):sel.delete(c.dataset.id);});updateBulkBar();});
+$("bulkClearBtn").addEventListener("click",()=>{sel.clear();document.querySelectorAll(".rowchk").forEach(c=>c.checked=false);updateBulkBar();});
+const selRows=()=>allMatches.filter(r=>sel.has(r.id));
+$("bulkStatusBtn").addEventListener("click",async()=>{
+  const rows=selRows(); if(!rows.length)return; const val=$("bulkStatus").value;
+  if(hasStatus===false&&INACTIVE.includes(val)){alert("Run add_status_column.sql in Supabase first to use "+val+".");return;}
+  const old=rows.map(r=>({id:r.id,recorded:r.recorded,uploaded:r.uploaded,status:r.status}));
+  const upd=deriveFlags(val); if(hasStatus!==false)upd.status=val;
+  const ids=rows.map(r=>r.id);
+  for(let i=0;i<ids.length;i+=100){const {error}=await client.from("matches").update(upd).in("id",ids.slice(i,i+100));if(error){alert(error.message);await render();return;}}
+  setUndo(`${rows.length} match(es) set to ${val}`,async()=>{await Promise.all(old.map(o=>{const u={recorded:o.recorded,uploaded:o.uploaded};if(hasStatus!==false&&o.status)u.status=o.status;return client.from("matches").update(u).eq("id",o.id);}));});
+  await render();
+});
+const addDays=(iso,n)=>{const [y,m,d]=iso.split("-").map(Number);return new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10);};
+$("bulkShiftBtn").addEventListener("click",async()=>{
+  const n=parseInt($("bulkShift").value,10),rows=selRows();
+  if(!rows.length)return; if(!n){alert("Enter a non-zero number of days (negative = earlier).");return;}
+  if(!confirm(`Move ${rows.length} match(es) by ${n} day(s)?`))return;
+  const hist=rows.map(r=>({match_id:r.id,old_date:r.match_date,old_time:r.match_time,new_date:addDays(r.match_date,n),new_time:r.match_time,series:r.series,match_name:r.match,changed_at:new Date().toISOString()}));
+  const h=await client.from("match_reschedule_history").insert(hist).select("id"); const histIds=h.error?[]:(h.data||[]).map(x=>x.id);
+  const res=await Promise.all(rows.map((r,i)=>client.from("matches").update({match_date:hist[i].new_date}).eq("id",r.id)));
+  const bad=res.find(x=>x.error); if(bad)alert(bad.error.message);
+  setUndo(`${rows.length} match(es) moved by ${n} day(s)`+(h.error?" (history not saved)":""),async()=>{
+    await Promise.all(rows.map(r=>client.from("matches").update({match_date:r.match_date}).eq("id",r.id)));
+    if(histIds.length)await client.from("match_reschedule_history").delete().in("id",histIds);
+  });
+  await render();
+});
+$("bulkDelBtn").addEventListener("click",async()=>{const rows=selRows();if(!rows.length)return;if(!confirm(`Delete ${rows.length} selected match(es)?`))return;await deleteRows(rows,`${rows.length} match(es) deleted`);});
+
+/* ================= v21: checklist + upload link ================= */
+const CK=["rec","trim","thumb","title","upl"];
+const ckOf=r=>(r.checklist&&typeof r.checklist==="object")?r.checklist:{};
+const ckCount=r=>CK.filter(k=>ckOf(r)[k]).length;
+const safeLink=u=>/^https?:\/\//i.test(String(u||"").trim())?String(u).trim():"";
+function ckCell(r){const n=ckCount(r),l=safeLink(r.video_link);return `<button class="small-btn" onclick="openCk('${r.id}')">${n}/5</button>`+(l?` <a href="${esc(l)}" target="_blank" rel="noopener">&#9654; link</a>`:"");}
+window.openCk=id=>{const r=allMatches.find(x=>x.id===id);if(!r)return;ckId=id;$("ckTitle").textContent=r.match;CK.forEach(k=>$("ck_"+k).checked=!!ckOf(r)[k]);$("ckLink").value=r.video_link||"";$("ckModal").classList.remove("hidden");};
+$("ckCancel").addEventListener("click",()=>$("ckModal").classList.add("hidden"));
+$("ckModal").addEventListener("click",e=>{if(e.target===$("ckModal"))$("ckModal").classList.add("hidden");});
+$("ckSave").addEventListener("click",async()=>{
+  if(hasExtra===false){alert("Run add_v21_columns.sql in Supabase first.");return;}
+  const link=$("ckLink").value.trim(); if(link&&!safeLink(link)){alert("Link must start with http:// or https://");return;}
+  const r=allMatches.find(x=>x.id===ckId); if(!r)return;
+  const old={checklist:ckOf(r),video_link:r.video_link||""}, nw={checklist:Object.fromEntries(CK.map(k=>[k,$("ck_"+k).checked])),video_link:link};
+  const {error}=await client.from("matches").update(nw).eq("id",ckId); if(error){alert(error.message);return;}
+  $("ckModal").classList.add("hidden"); setUndo("Checklist saved",async()=>{await client.from("matches").update(old).eq("id",ckId);}); await render();
+});
+
 init();
+
+
 
 </script>
 </body>
